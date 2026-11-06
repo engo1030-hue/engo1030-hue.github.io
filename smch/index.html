@@ -596,24 +596,50 @@
     box-shadow: 0 0 8px #ff3b30; animation: breathe 1.4s infinite;
   }
 
-  /* 유튜브 설교 모달: 전체창 모드 & 예배당 상단 미니화면(PIP) 동시 지원 */
-  #modal-sermon-video.is-pip-mode {
+  /* 유튜브 설교 플레이어: 기본값 = 예배당이 그대로 보이는 상단 플로팅 모니터 (전체화면 가림 방지!) */
+  #modal-sermon-video {
     background: transparent !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     pointer-events: none !important;
     align-items: flex-start !important;
+    justify-content: center !important;
+    padding: 52px 12px 12px 12px !important;
+  }
+  #modal-sermon-video .sermon-player-card {
+    width: 520px !important;
+    max-width: calc(100vw - 20px) !important;
+    pointer-events: auto !important;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.82) !important;
+    border: 2px solid rgba(245, 207, 118, 0.85) !important;
+    transition: width 0.22s ease, transform 0.22s ease;
+  }
+  /* 미니화면(우측 상단 고정) 모드 */
+  #modal-sermon-video.is-pip-mode {
     justify-content: flex-end !important;
-    padding: 54px 14px 14px 14px !important;
   }
   #modal-sermon-video.is-pip-mode .sermon-player-card {
-    width: 360px !important;
-    max-width: calc(100vw - 24px) !important;
-    pointer-events: auto !important;
-    box-shadow: 0 16px 42px rgba(0,0,0,0.75) !important;
-    border: 1.5px solid rgba(245, 207, 118, 0.75) !important;
+    width: 330px !important;
+    max-width: calc(100vw - 20px) !important;
   }
   #modal-sermon-video.is-pip-mode .sermon-playlist-bar {
+    display: none !important;
+  }
+  /* 소리만 듣기(영상 프레임 접기) 모드 */
+  #modal-sermon-video.is-audio-only-mode {
+    justify-content: center !important;
+  }
+  #modal-sermon-video.is-audio-only-mode .sermon-player-card {
+    width: 460px !important;
+    max-width: calc(100vw - 20px) !important;
+  }
+  #modal-sermon-video.is-audio-only-mode .sermon-video-frame-wrap {
+    height: 1px !important;
+    padding-top: 0 !important;
+    overflow: hidden !important;
+    opacity: 0.01 !important;
+  }
+  #modal-sermon-video.is-audio-only-mode .sermon-playlist-bar {
     display: none !important;
   }
   .sermon-chip-btn {
@@ -1138,24 +1164,25 @@ html, body {
   </div>
 </div>
 
-<!-- 6-D. [신촌감리교회 전면 설교 스크린] 유튜브 설교 영상·음성 플레이어 (전체창 & 예배당 상단 미니화면 동시 지원) -->
-<div class="modal-backdrop" id="modal-sermon-video" style="z-index:125; background:rgba(8,6,5,0.88);">
-  <div class="sermon-player-card" style="width:94vw; max-width:980px; border-radius:12px; background:#151821; border:1.5px solid rgba(212,168,83,0.65); overflow:hidden; box-shadow:0 28px 80px rgba(0,0,0,0.85);">
-    <div style="padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:8px; border-bottom:1px solid rgba(212,168,83,0.25); background:#1c2130; flex-wrap:wrap;">
-      <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1;">
-        <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:#ff3b30; box-shadow:0 0 8px #ff3b30; flex-shrink:0;"></span>
-        <strong id="sermon-video-modal-title" style="font-family:var(--serif); font-size:15.5px; color:#ffe6a3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">📺 [신촌감리교회 주일예배] 예수님이 기뻐 춤추시는 교회 · 임재웅 목사</strong>
+<!-- 6-D. [신촌감리교회 전면 설교 스크린] 유튜브 설교 영상·음성 플레이어 (예배당 시야 유지형 플로팅 모니터) -->
+<div class="modal-backdrop" id="modal-sermon-video" style="z-index:125;">
+  <div class="sermon-player-card" style="border-radius:10px; background:rgba(21, 24, 33, 0.96); overflow:hidden;">
+    <div style="padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:6px; border-bottom:1px solid rgba(212,168,83,0.3); background:#1c2130; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:7px; min-width:0; flex:1;">
+        <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ff3b30; box-shadow:0 0 8px #ff3b30; flex-shrink:0;"></span>
+        <strong id="sermon-video-modal-title" style="font-family:var(--serif); font-size:13.5px; color:#ffe6a3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">📺 예수님이 기뻐 춤추시는 교회 · 임재웅 목사</strong>
       </div>
-      <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-        <button type="button" class="amen-mini-btn" id="btn-toggle-pip-mode" style="padding:5px 10px; font-size:12px; font-weight:800; background:rgba(70,115,210,0.35); border-color:#8ab4ff; color:#eaf2ff;" title="설교 영상·소리를 켜둔 채 예배당 의자에 앉거나 기도하기">🗗 미니화면으로 설교 들으며 기도하기</button>
-        <button class="panel-close" id="btn-close-sermon-video" style="font-size:20px; padding:2px 6px;" title="설교 화면 닫기">✕</button>
+      <div style="display:flex; align-items:center; gap:5px; flex-shrink:0; flex-wrap:wrap;">
+        <button type="button" class="amen-mini-btn" id="btn-toggle-audio-only" style="padding:5px 9px; font-size:11.5px; font-weight:800; background:rgba(46,125,90,0.4); border-color:#6ee7b7; color:#ecfdf5;" title="영상 창을 접고 설교 소리만 들으며 예배당 걷기">🎧 소리만 듣기</button>
+        <button type="button" class="amen-mini-btn" id="btn-toggle-pip-mode" style="padding:5px 9px; font-size:11.5px; font-weight:800; background:rgba(70,115,210,0.35); border-color:#8ab4ff; color:#eaf2ff;" title="우측 상단 작은 화면으로 축소">🗗 미니창</button>
+        <button type="button" id="btn-close-sermon-video" style="padding:5px 11px; border-radius:6px; border:1px solid #ffd875; background:linear-gradient(135deg, #e5c168 0%, #b3832d 100%); color:#1a1209; font-size:12px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:4px;" title="설교를 끄고 예배당으로 돌아가기">⬅️ 예배당 돌아가기 ✕</button>
       </div>
     </div>
-    <div style="position:relative; width:100%; padding-top:56.25%; background:#000;">
+    <div class="sermon-video-frame-wrap" style="position:relative; width:100%; padding-top:56.25%; background:#000; transition:all 0.2s ease;">
       <iframe id="sermon-video-iframe" src="" title="신촌감리교회 유튜브 설교 영상" style="position:absolute; inset:0; width:100%; height:100%; border:none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
-    <!-- 설교 말씀 빠른 선택 바 & 유튜브 링크 직접 입력 -->
-    <div class="sermon-playlist-bar" style="padding:12px 16px; background:#181c28; border-top:1px solid rgba(212,168,83,0.22); display:flex; flex-direction:column; gap:8px;">
+    <!-- 설교 말씀 빠른 선택 바 & 하단 예배당 복귀 버튼 -->
+    <div class="sermon-playlist-bar" style="padding:10px 12px; background:#181c28; border-top:1px solid rgba(212,168,83,0.22); display:flex; flex-direction:column; gap:7px;">
       <div style="display:flex; align-items:center; gap:6px; overflow-x:auto; padding-bottom:2px;">
         <span style="font-size:12px; font-weight:800; color:#f5cf76; flex-shrink:0;">🎬 신촌감리교회 설교 선택:</span>
         <button type="button" class="sermon-chip-btn active" data-yt-vid="h9BEzqXz2l0" data-yt-title="[2026 표어 말씀] 예수님이 기뻐 춤추시는 교회 (스바냐 3:17) · 임재웅 목사">1. 예수님이 기뻐 춤추시는 교회 (2026 표어)</button>
@@ -1169,6 +1196,10 @@ html, body {
         <span style="font-size:12px; color:#b8c4dc; font-weight:600;">🔗 다른 유튜브 설교·찬양 링크 재생:</span>
         <input type="text" id="custom-yt-input" placeholder="유튜브 주소(URL) 또는 영상 ID 붙여넣기..." style="flex:1; min-width:180px; padding:6px 10px; border-radius:6px; border:1px solid rgba(212,168,83,0.35); background:rgba(10,12,18,0.8); color:#fff; font-size:12.5px; user-select:text; -webkit-user-select:text;">
         <button type="button" class="amen-mini-btn" id="btn-play-custom-yt" style="padding:6px 12px; font-size:12px; font-weight:800;">▶ 바로 상영</button>
+      </div>
+      <div style="display:flex; gap:6px; margin-top:2px;">
+        <button type="button" id="btn-bottom-audio-keep" style="flex:1; padding:8px 10px; border-radius:6px; border:1px solid rgba(138,180,255,0.6); background:rgba(40,72,140,0.45); color:#eaf2ff; font-size:12.5px; font-weight:800; cursor:pointer;">🎧 설교 소리 켜둔 채 예배당 걷기·기도하기</button>
+        <button type="button" id="btn-bottom-close-sermon" style="flex:1; padding:8px 10px; border-radius:6px; border:1px solid rgba(245,207,118,0.7); background:rgba(212,168,83,0.25); color:#ffe8a3; font-size:12.5px; font-weight:800; cursor:pointer;">⬅️ 설교 끄고 예배당으로 돌아가기</button>
       </div>
     </div>
   </div>
@@ -3750,13 +3781,41 @@ html, body {
     openSermonScreenPlayer(false);
   });
 
+  const btnToggleAudioOnly = document.getElementById('btn-toggle-audio-only');
   function updatePipButtonLabel() {
     const isPip = sermonVideoModal.classList.contains('is-pip-mode');
+    const isAudioOnly = sermonVideoModal.classList.contains('is-audio-only-mode');
     if (btnTogglePip) {
-      btnTogglePip.textContent = isPip
-        ? '⛶ 큰 화면으로 설교 보기'
-        : '🗗 미니화면으로 설교 들으며 기도하기';
+      btnTogglePip.textContent = isPip ? '⛶ 기본창' : '🗗 미니창';
     }
+    if (btnToggleAudioOnly) {
+      btnToggleAudioOnly.textContent = isAudioOnly ? '📺 영상 펼치기' : '🎧 소리만 듣기';
+    }
+  }
+  if (btnToggleAudioOnly) {
+    btnToggleAudioOnly.addEventListener('click', () => {
+      sermonVideoModal.classList.remove('is-pip-mode');
+      sermonVideoModal.classList.toggle('is-audio-only-mode');
+      updatePipButtonLabel();
+      if (sermonVideoModal.classList.contains('is-audio-only-mode')) {
+        setStatusBanner('🎧 영상 창을 접고 설교 소리만 재생합니다. 예배당을 자유롭게 걸으며 기도하실 수 있습니다.');
+      }
+    });
+  }
+  const btnBottomAudioKeep = document.getElementById('btn-bottom-audio-keep');
+  if (btnBottomAudioKeep) {
+    btnBottomAudioKeep.addEventListener('click', () => {
+      sermonVideoModal.classList.remove('is-pip-mode');
+      sermonVideoModal.classList.add('is-audio-only-mode');
+      updatePipButtonLabel();
+      setStatusBanner('🎧 설교 소리를 켜둔 채 예배당으로 돌아왔습니다. 상단 바에서 언제든 영상을 다시 펼치거나 끌 수 있습니다.');
+    });
+  }
+  const btnBottomCloseSermon = document.getElementById('btn-bottom-close-sermon');
+  if (btnBottomCloseSermon) {
+    btnBottomCloseSermon.addEventListener('click', () => {
+      document.getElementById('btn-close-sermon-video').click();
+    });
   }
 
   function loadAndPlayYoutubeSermon(vid, titleText, startInPip = false) {
@@ -3854,7 +3913,7 @@ html, body {
   }
 
   document.getElementById('btn-close-sermon-video').addEventListener('click', () => {
-    sermonVideoModal.classList.remove('is-open', 'is-pip-mode');
+    sermonVideoModal.classList.remove('is-open', 'is-pip-mode', 'is-audio-only-mode');
     sermonVideoIframe.src = '';
     isSermonVideoPlaying = false;
     const badgeTxt = document.getElementById('front-screen-badge-txt');
