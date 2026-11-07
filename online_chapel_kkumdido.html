@@ -8,8 +8,8 @@
 <meta name="description" content="오래된 우물 곁에서 성화와 원어 말씀을 묵상하며 말없이 함께 머무는 꿈바온 디지털도서관(꿈디도) 온라인 묵상원.">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://kkumbaon.com/kkumbaon-library/assets/three.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'"></script>
-<script src="https://kkumbaon.com/kkumbaon-library/assets/mqtt.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/mqtt@5.3.4/dist/mqtt.min.js'"></script>
+<script src="./assets/three.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'"></script>
+<script src="./assets/mqtt.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/mqtt@5.3.4/dist/mqtt.min.js'"></script>
 <style>
   :root {
     --bg-midnight: #F9F6F0;
@@ -556,7 +556,7 @@ html, body {
 }
 /* === [KKUMDIDO_UNIFIED_1440_LOCK_END] === */
 </style>
-  <link rel="stylesheet" href="https://kkumbaon.com/kkumbaon-library/kkumdido_mobile.css?v=20261107e"/>
+  <link rel="stylesheet" href="kkumdido_mobile.css?v=20261107e"/>
 </head>
 <body class="is-3d-chapel-page">
 
@@ -610,7 +610,7 @@ html, body {
 <!-- 3. 상단 HUD 바 -->
 <header class="top-bar">
   <div class="top-left">
-    <a class="hud-pill" href="https://kkumbaon.com/kkumbaon-library/index.html" title="꿈바온 디지털도서관 메인 아트리움으로 이동">
+    <a class="hud-pill" href="./index.html" title="꿈바온 디지털도서관 메인 아트리움으로 이동">
       <span>🏛️ 꿈디도 본관</span>
     </a>
     <button class="hud-pill" id="btn-cloister-room" title="꿈디도 묵상원 회랑 서버 및 함께 있는 순례자 보기">
@@ -855,7 +855,7 @@ html, body {
     <h2 class="panel-title">🖼️ 작은 미술전시회 · 성화 도슨트</h2>
     <button class="panel-close" data-close="panel-gallery">✕</button>
   </div>
-  <img id="art-img" class="art-preview-img" src="https://kkumbaon.com/kkumbaon-library/assets/webp/feast_wide_01_sabbath_lamps.webp" alt="성화" style="cursor:zoom-in;" title="클릭하면 전체화면으로 크게 확대됩니다">
+  <img id="art-img" class="art-preview-img" src="./assets/webp/feast_wide_01_sabbath_lamps.webp" alt="성화" style="cursor:zoom-in;" title="클릭하면 전체화면으로 크게 확대됩니다">
   <button class="gold-btn" id="btn-open-art-zoom" style="padding:7px 12px; font-size:12px;">🔍 성화 전체화면 크게 확대보기 (100%~350% 돋보기)</button>
   <div class="art-title" id="art-title">1. 안식일의 등불 · 거룩한 쉼의 초대</div>
   <div style="font-size:11.5px; color:var(--gold); margin-bottom:4px;" id="art-ref">창세기 2:2-3 · 출애굽기 20:8</div>
@@ -877,7 +877,7 @@ html, body {
   <!-- 지난 주 조금 긴 성경이야기 (주일말씀) -->
   <div style="padding:11px 12px; border-radius:14px; border:1.5px solid rgba(245,215,142,0.45); background:linear-gradient(180deg, rgba(28,36,56,0.9) 0%, rgba(16,22,38,0.95) 100%); display:flex; flex-direction:column; gap:7px;">
     <div style="display:flex; gap:10px; align-items:center;">
-      <img src="https://kkumbaon.com/kkumbaon-library/assets/webp/2026-11-01-책을-들고-나온-사람들-사도행전-191-20.webp" alt="책을 들고 나온 사람들" style="width:74px; height:44px; object-fit:cover; border-radius:7px; border:1px solid rgba(212,175,55,0.5); flex-shrink:0;">
+      <img src="./assets/webp/2026-11-01-책을-들고-나온-사람들-사도행전-191-20.webp" alt="책을 들고 나온 사람들" style="width:74px; height:44px; object-fit:cover; border-radius:7px; border:1px solid rgba(212,175,55,0.5); flex-shrink:0;">
       <div style="flex:1; min-width:0;">
         <div style="font-size:11.5px; color:#f5d78e; font-weight:700;">📖 지난 주 조금 긴 성경이야기 (29:35)</div>
         <div style="font-size:13.5px; color:#fff; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">책을 들고 나온 사람들 · 사도행전 19:1–20</div>
@@ -885,7 +885,7 @@ html, body {
     </div>
     <div style="display:flex; gap:6px; align-items:center;">
       <button class="gold-btn" id="btn-kk-rew" style="width:auto; padding:5px 9px; font-size:12px;">↺ -15초</button>
-      <button class="gold-btn lang-btn active" id="btn-kk-long-story" data-lang="ko-long" data-src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/sermon_20261101_ko.mp3" style="flex:1; padding:7px 10px; font-size:13px; text-align:center;">▶ 조금 긴 성경이야기 듣기</button>
+      <button class="gold-btn lang-btn active" id="btn-kk-long-story" data-lang="ko-long" data-src="./assets/chapel_audio/sermon_20261101_ko.mp3" style="flex:1; padding:7px 10px; font-size:13px; text-align:center;">▶ 조금 긴 성경이야기 듣기</button>
       <button class="gold-btn" id="btn-kk-fwd" style="width:auto; padding:5px 9px; font-size:12px;">+15초 ↻</button>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
@@ -899,14 +899,14 @@ html, body {
     <strong>[8개국어 매일말씀] 베들레헴 성문에서 (룻기 4장)</strong>
   </div>
   <div class="lang-grid" id="lang-grid">
-    <button class="lang-btn" data-lang="ko" data-src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/word_ko.mp3">🇰🇷 한국어 (목사님 육성)</button>
-    <button class="lang-btn" data-lang="en" data-src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/word_en.mp3">🇺🇸 English (ESV)</button>
-    <button class="lang-btn" data-lang="zh" data-src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/word_zh.mp3">🇨🇳 中文简体 (和合本)</button>
-    <button class="lang-btn" data-lang="ja" data-src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/word_ja.mp3">🇯🇵 日本語 (新改訳)</button>
-    <button class="lang-btn" data-lang="es" data-src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/word_es.mp3">🇪🇸 Español (RVR1960)</button>
-    <button class="lang-btn" data-lang="pt" data-src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/word_pt.mp3">🇧🇷 Português (ARA)</button>
-    <button class="lang-btn" data-lang="vi" data-src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/word_vi.mp3">🇻🇳 Tiếng Việt</button>
-    <button class="lang-btn" data-lang="id" data-src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/word_id.mp3">🇮🇩 Bahasa Indonesia</button>
+    <button class="lang-btn" data-lang="ko" data-src="./assets/chapel_audio/word_ko.mp3">🇰🇷 한국어 (목사님 육성)</button>
+    <button class="lang-btn" data-lang="en" data-src="./assets/chapel_audio/word_en.mp3">🇺🇸 English (ESV)</button>
+    <button class="lang-btn" data-lang="zh" data-src="./assets/chapel_audio/word_zh.mp3">🇨🇳 中文简体 (和合本)</button>
+    <button class="lang-btn" data-lang="ja" data-src="./assets/chapel_audio/word_ja.mp3">🇯🇵 日本語 (新改訳)</button>
+    <button class="lang-btn" data-lang="es" data-src="./assets/chapel_audio/word_es.mp3">🇪🇸 Español (RVR1960)</button>
+    <button class="lang-btn" data-lang="pt" data-src="./assets/chapel_audio/word_pt.mp3">🇧🇷 Português (ARA)</button>
+    <button class="lang-btn" data-lang="vi" data-src="./assets/chapel_audio/word_vi.mp3">🇻🇳 Tiếng Việt</button>
+    <button class="lang-btn" data-lang="id" data-src="./assets/chapel_audio/word_id.mp3">🇮🇩 Bahasa Indonesia</button>
   </div>
   <button class="gold-btn" id="btn-play-word">▶ 선택한 말씀 듣기 / 일시정지</button>
 
@@ -1015,14 +1015,14 @@ html, body {
       </div>
     </div>
     <div id="kk-zoom-viewport" style="flex:1; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; cursor:grab; background:#070a12;">
-      <img id="kk-zoom-img" src="https://kkumbaon.com/kkumbaon-library/assets/webp/feast_wide_01_sabbath_lamps.webp" alt="성화 확대" style="max-width:92%; max-height:92%; object-fit:contain; transition:transform 0.12s ease-out; transform-origin:center center; border-radius:8px; box-shadow:0 12px 44px rgba(0,0,0,0.8);">
+      <img id="kk-zoom-img" src="./assets/webp/feast_wide_01_sabbath_lamps.webp" alt="성화 확대" style="max-width:92%; max-height:92%; object-fit:contain; transition:transform 0.12s ease-out; transform-origin:center center; border-radius:8px; box-shadow:0 12px 44px rgba(0,0,0,0.8);">
     </div>
     <div id="kk-zoom-desc" style="padding:14px 22px; font-size:13.5px; color:#dce4f2; line-height:1.65; background:#131c31; border-top:1px solid rgba(212,175,55,0.2);"></div>
   </div>
 </div>
 
-<audio id="bgm-piano" loop preload="auto" src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/piano_grace.mp3"></audio>
-<audio id="voice-word" preload="metadata" src="https://kkumbaon.com/kkumbaon-library/assets/chapel_audio/sermon_20261101_ko.mp3"></audio>
+<audio id="bgm-piano" loop preload="auto" src="./assets/chapel_audio/piano_grace.mp3"></audio>
+<audio id="voice-word" preload="metadata" src="./assets/chapel_audio/sermon_20261101_ko.mp3"></audio>
 
 <script>
 (() => {
@@ -1074,7 +1074,7 @@ html, body {
     {
       title: "1. 책을 들고 나온 사람들 · 에베소 성도들의 결단 (지난 주 조금 긴 성경이야기)",
       ref: "사도행전 19:1–20",
-      img: "https://kkumbaon.com/kkumbaon-library/assets/webp/2026-11-01-책을-들고-나온-사람들-사도행전-191-20.webp",
+      img: "./assets/webp/2026-11-01-책을-들고-나온-사람들-사도행전-191-20.webp",
       desc: "일꾼 바울의 땀 묻은 앞치마와 수건을 통해 일하신 하나님, 그리고 은 오만이나 되는 마술책을 스스로 들고 나와 불사르며 주의 이름을 높인 에베소 성도들의 이야기입니다. (하단 [5] 말씀·소리 메뉴에서 29분 35초 전체 말씀을 경청하실 수 있습니다.)",
       pos: new THREE.Vector3(-14.2, 2.75, -7.2),
       standPos: new THREE.Vector3(-10.8, 0, -7.2),
@@ -1083,7 +1083,7 @@ html, body {
     {
       title: "2. 유월절 우슬초 · 문설주에 발라진 구속의 피",
       ref: "출애굽기 12:22 · 시편 51:7",
-      img: "https://kkumbaon.com/kkumbaon-library/assets/webp/feast_wide_02_passover_hyssop.webp",
+      img: "./assets/webp/feast_wide_02_passover_hyssop.webp",
       desc: "화려한 백향목이 아니라 돌담 틈에 자라는 가장 보잘것없는 풀 ‘우슬초’가 어린양의 피를 머금고 생명을 살리는 도구가 되었습니다. 우리의 자격이 아닌 오직 어린양의 피로 구원받는 은혜를 보여줍니다.",
       pos: new THREE.Vector3(-14.2, 2.75, 7.2),
       standPos: new THREE.Vector3(-10.8, 0, 7.2),
@@ -1092,7 +1092,7 @@ html, body {
     {
       title: "3. 베들레헴 성문에서 건네받은 신발 · 기업 무름(고엘)",
       ref: "룻기 4:7-17",
-      img: "https://kkumbaon.com/kkumbaon-library/assets/webp/2026-10-14-보아스가-건네받은-신발-룻기-47-17.webp",
+      img: "./assets/webp/2026-10-14-보아스가-건네받은-신발-룻기-47-17.webp",
       desc: "자기 계산을 따지던 아무개는 신발을 벗어 던지고 떠났지만, 보아스는 성문 장로들 앞에서 룻과 나오미의 모든 짐을 기꺼이 떠안았습니다. 우리를 위해 모든 대가를 치르신 참된 고엘, 예수 그리스도의 그림자입니다.",
       pos: new THREE.Vector3(-6.8, 2.75, -14.2),
       standPos: new THREE.Vector3(-6.8, 0, -10.8),
@@ -1101,7 +1101,7 @@ html, body {
     {
       title: "4. 에벤에셀 · 여기까지 우리를 도우신 하나님",
       ref: "사무엘상 7:12",
-      img: "https://kkumbaon.com/kkumbaon-library/assets/webp/2026-09-21-소소한-성경이야기-에벤에셀-i-사무엘상-712.webp",
+      img: "./assets/webp/2026-09-21-소소한-성경이야기-에벤에셀-i-사무엘상-712.webp",
       desc: "미스바의 눈물 어린 회개 뒤에 세워진 도움의 돌 ‘에벤에셀’. 패배의 기억이 있던 바로 그 자리가 하나님의 도우심을 증거하는 은혜의 기념비가 되었습니다.",
       pos: new THREE.Vector3(6.8, 2.75, -14.2),
       standPos: new THREE.Vector3(6.8, 0, -10.8),
@@ -1110,7 +1110,7 @@ html, body {
     {
       title: "5. 돌아와 발아래 엎드린 사마리아 나병환자",
       ref: "누가복음 17:15-16",
-      img: "https://kkumbaon.com/kkumbaon-library/assets/webp/fig_wide_03_samaritan_leper.webp",
+      img: "./assets/webp/fig_wide_03_samaritan_leper.webp",
       desc: "열 명이 고침을 받았으나 아홉은 자기 길로 가고, 오직 이방인이었던 사마리아 사람 한 명만 큰 소리로 하나님께 영광을 돌리며 예수님의 발아래 엎드려 감사를 드렸습니다.",
       pos: new THREE.Vector3(14.2, 2.75, -7.2),
       standPos: new THREE.Vector3(10.8, 0, -7.2),
@@ -1119,7 +1119,7 @@ html, body {
     {
       title: "6. 요단강의 세례 요한 · 주의 길을 예비하는 소리",
       ref: "요한복음 1:23 · 1:29",
-      img: "https://kkumbaon.com/kkumbaon-library/assets/webp/fig_wide_06_john_baptist_jordan.webp",
+      img: "./assets/webp/fig_wide_06_john_baptist_jordan.webp",
       desc: "스스로 빛이라 하지 않고 오직 광야에서 외치는 ‘소리’로 살았던 세례 요한. 세상 죄를 지고 가는 하나님의 어린양을 가리킨 손끝의 겸손을 묵상합니다.",
       pos: new THREE.Vector3(14.2, 2.75, 7.2),
       standPos: new THREE.Vector3(10.8, 0, 7.2),
@@ -1128,7 +1128,7 @@ html, body {
     {
       title: "7. 나단 선지자와 다윗의 눈물 · 상한 심령의 회복",
       ref: "사무엘하 12:13 · 시편 51:17",
-      img: "https://kkumbaon.com/kkumbaon-library/assets/webp/fig_wide_08_nathan_and_david.webp",
+      img: "./assets/webp/fig_wide_08_nathan_and_david.webp",
       desc: "“당신이 그 사람이라.” 하나님의 말씀 앞에 왕관을 내려놓고 “내가 여호와께 죄를 범하였노라” 고백할 때, 정죄를 넘어선 회복의 은혜가 시작되었습니다.",
       pos: new THREE.Vector3(-6.8, 2.75, 14.2),
       standPos: new THREE.Vector3(-6.8, 0, 10.8),
@@ -1137,7 +1137,7 @@ html, body {
     {
       title: "8. 다른 길로 고국에 돌아간 동방박사들",
       ref: "마태복음 2:11-12",
-      img: "https://kkumbaon.com/kkumbaon-library/assets/webp/fig_wide_09_magi_another_way.webp",
+      img: "./assets/webp/fig_wide_09_magi_another_way.webp",
       desc: "아기 예수께 경배하고 보배합을 열어 예물을 드린 박사들은 헤롯의 궁전으로 돌아가지 않고 ‘다른 길’로 돌아갔습니다. 주님을 진짜 만난 사람은 이전의 길로 돌아가지 않습니다.",
       pos: new THREE.Vector3(6.8, 2.75, 14.2),
       standPos: new THREE.Vector3(6.8, 0, 10.8),
@@ -2864,10 +2864,17 @@ html, body {
 
   btnChatToggle.addEventListener('click', () => {
     const collapsed = chatlogBox.classList.toggle('is-collapsed');
-    if (chatStackBox) chatStackBox.classList.toggle('is-collapsed', collapsed);
+    chatlogBox.classList.toggle('is-folded', collapsed);
+    if (chatStackBox) {
+      chatStackBox.classList.toggle('is-collapsed', collapsed);
+      chatStackBox.classList.toggle('chat-is-collapsed', collapsed);
+    }
     chatToggleLabel.textContent = collapsed
       ? '💬 실시간 말씀·기도 나눔 & 포즈 (열기 ▲)'
       : '💬 실시간 말씀·기도 나눔 & 포즈 (접기 ▼)';
+    if (!collapsed && chatListEl) {
+      setTimeout(() => { chatListEl.scrollTop = chatListEl.scrollHeight; }, 30);
+    }
   });
 
   btnBlockPanel.addEventListener('click', () => {
@@ -3698,7 +3705,7 @@ html, body {
   <span style="font-size:11px; opacity:0.82;">Compiled by Kkumbaon Ministry · Overseen by the Pastor of Kkumbaon, an ordained minister in full connection with the Korean Methodist Church</span>
 </div>
 
-  <script src="https://kkumbaon.com/kkumbaon-library/kkumdido-shield.js"></script>
-  <script src="https://kkumbaon.com/kkumbaon-library/kkumdido_mobile.js?v=20261107e"></script>
+  <script src="kkumdido-shield.js"></script>
+  <script src="kkumdido_mobile.js?v=20261107f"></script>
 </body>
 </html>
