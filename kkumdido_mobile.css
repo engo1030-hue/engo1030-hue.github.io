@@ -1,0 +1,1694 @@
+/* ==========================================================================
+   🏛️ 꿈바온 디지털 도서관 (꿈디도) 모바일 특화 모드 v4.1 (Zero-Overflow & Accessible Edition)
+   - PC 와이드(1440px) 디자인 100% 온전 보존
+   - 모바일(스마트폰 360px~430px):
+     1) 글자 크기 하한선 보장: 본문 최소 12px, 라벨/보조 최소 11px (극단적 소형화 6~10px 전면 폐지)
+     2) 터치 영역 최소 32px 확보: 오터치 원천 차단
+     3) 15개 전체 페이지 가로 넘침(Overflow) 0건 달성 (인물대백과, 설교스튜디오, 가정예배 목차표/탑바, 12대 아카이브 헤더)
+     4) 3D 예배당 HUD: 중앙 70% 탁 트인 시야 유지 + 알약/채팅/포즈바 최적 가독성
+   ========================================================================== */
+
+/* 데스크톱에서는 3D 예배당 모바일 전용 홈 버튼 숨김 */
+#btn-chapel-home-mobile {
+  display: none;
+}
+
+/* 데스크톱/모바일 공통: 3D 예배당 대화창 접기(is-collapsed / is-folded) 동기화 */
+.chapel-chatlog.is-collapsed .chapel-chat-list,
+.chapel-chatlog.is-folded .chapel-chat-list {
+  display: none !important;
+}
+.chapel-chatlog.is-collapsed,
+.chapel-chatlog.is-folded {
+  padding-bottom: 4px !important;
+}
+
+/* 상단 헤더 모바일/PC 전환 스위치 버튼 */
+.kkumdido-header-mode-btn {
+  height: 32px;
+  padding: 0 9px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 6px;
+  background: rgba(197, 155, 56, 0.16);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  color: #F5DF98;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+@media (min-width: 1025px) and (hover: hover) and (pointer: fine) {
+  .kkumdido-header-mode-btn {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
+  html:not(.pc-override),
+  html:not(.pc-override) body {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    -webkit-text-size-adjust: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+
+  html:not(.pc-override) body:not(.is-3d-chapel-page) {
+    padding-bottom: 60px !important; /* 하단 엄지 탭바 공간 */
+  }
+
+  /* 모든 대형 컨테이너의 1440px/1392px 강제 폭 완전 해제 -> 100% 유동형 전환 */
+  html:not(.pc-override) .entrance-header,
+  html:not(.pc-override) .kkumdido-12halls-bar,
+  html:not(.pc-override) .kkumdido-studios-drawer,
+  html:not(.pc-override) .kkd-drawer-inner,
+  html:not(.pc-override) .kkumbaon-welcome-bar,
+  html:not(.pc-override) .top-slim-tabs-bar,
+  html:not(.pc-override) .entrance-main,
+  html:not(.pc-override) footer,
+  html:not(.pc-override) .kkumdido-12halls-inner,
+  html:not(.pc-override) .kkumbaon-welcome-inner,
+  html:not(.pc-override) .top-slim-tabs-inner,
+  html:not(.pc-override) .hall-intro,
+  html:not(.pc-override) #kkumdidoSignatureStage,
+  html:not(.pc-override) .explore-hall,
+  html:not(.pc-override) .city-story,
+  html:not(.pc-override) .featured-places,
+  html:not(.pc-override) .shelf-gateway,
+  html:not(.pc-override) #ebookShelfSection,
+  html:not(.pc-override) .controls-wrap,
+  html:not(.pc-override) .cinema-studio-grid,
+  html:not(.pc-override) .archive-main,
+  html:not(.pc-override) .top-header-inner,
+  html:not(.pc-override) .hero-inner,
+  html:not(.pc-override) .atlas-drawer,
+  html:not(.pc-override) .kkumdido-notice-board,
+  html:not(.pc-override) .main-container,
+  html:not(.pc-override) .container,
+  html:not(.pc-override) .page {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  html:not(.pc-override) .entrance-main,
+  html:not(.pc-override) #ebookShelfSection,
+  html:not(.pc-override) .controls-wrap,
+  html:not(.pc-override) .archive-main,
+  html:not(.pc-override) .atlas-drawer {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* ==========================================================================
+     1. 본관 상단 슬림 모바일 헤더 (높이 48px, 터치 높이 32px 이상)
+     ========================================================================== */
+  html:not(.pc-override) .entrance-header {
+    height: 48px !important;
+    padding: 0 8px !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    background: rgba(22, 19, 17, 0.96) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgba(197, 155, 56, 0.3) !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not(.pc-override) .entrance-brand {
+    gap: 5px !important;
+    align-items: center !important;
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+    min-height: 32px !important;
+    display: flex !important;
+  }
+
+  html:not(.pc-override) .entrance-emblem {
+    width: 20px !important;
+    height: 24px !important;
+    flex-shrink: 0 !important;
+    color: #E5C878 !important;
+  }
+
+  html:not(.pc-override) .entrance-brand strong {
+    font-size: 13.5px !important;
+    letter-spacing: -0.5px !important;
+    white-space: nowrap !important;
+    color: #F7EAD0 !important;
+    font-weight: 700 !important;
+  }
+
+  html:not(.pc-override) .entrance-brand small {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .entrance-nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin-left: auto !important;
+    width: auto !important;
+    order: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: visible !important;
+    flex-shrink: 0 !important;
+  }
+
+  html:not(.pc-override) .entrance-nav > a,
+  html:not(.pc-override) .entrance-nav > button:not(.nav-search-btn):not(.nav-studio-trigger),
+  html:not(.pc-override) .entrance-nav .nav-guide-btn {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .entrance-nav .nav-search-btn {
+    height: 30px !important;
+    width: 32px !important;
+    padding: 0 !important;
+    font-size: 0 !important;
+    border-radius: 6px !important;
+    background: rgba(251, 249, 243, 0.12) !important;
+    color: #F5DF98 !important;
+    border: 1px solid rgba(212, 175, 55, 0.45) !important;
+    margin-left: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+  }
+  html:not(.pc-override) .entrance-nav .nav-search-btn::before {
+    content: "🔍" !important;
+    font-size: 13.5px !important;
+  }
+
+  html:not(.pc-override) .entrance-nav .nav-studio-trigger {
+    height: 30px !important;
+    padding: 0 8px !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    border-radius: 6px !important;
+    background: linear-gradient(135deg, #382817 0%, #241A10 100%) !important;
+    color: #F5DF98 !important;
+    border: 1px solid #C8A45D !important;
+    white-space: nowrap !important;
+    margin-left: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+  }
+
+  html:not(.pc-override) .entrance-theme {
+    height: 30px !important;
+    width: 32px !important;
+    padding: 0 !important;
+    font-size: 0 !important;
+    border-radius: 6px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    color: #E5C878 !important;
+    flex-shrink: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  html:not(.pc-override) .entrance-theme::before {
+    content: "🌙" !important;
+    font-size: 13.5px !important;
+  }
+
+  /* ==========================================================================
+     2. 사역 스튜디오 8종 서랍 (Drawer)
+     ========================================================================== */
+  html:not(.pc-override) .kkumdido-studios-drawer {
+    padding: 10px 12px !important;
+  }
+
+  html:not(.pc-override) .kkd-drawer-top {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  html:not(.pc-override) .kkd-drawer-title {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 3px !important;
+    font-size: 13px !important;
+  }
+
+  html:not(.pc-override) .kkd-drawer-title span.sub {
+    font-size: 11px !important;
+  }
+
+  html:not(.pc-override) .kkd-drawer-actions {
+    width: 100% !important;
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+  }
+
+  html:not(.pc-override) .kkd-drawer-actions button {
+    font-size: 11px !important;
+    padding: 6px 9px !important;
+    min-height: 30px !important;
+  }
+
+  html:not(.pc-override) .kkd-drawer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  html:not(.pc-override) .kkd-studio-card {
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+    min-height: 48px !important;
+  }
+
+  html:not(.pc-override) .kkd-studio-card strong {
+    font-size: 12px !important;
+  }
+
+  html:not(.pc-override) .kkd-studio-card p,
+  html:not(.pc-override) .kkd-studio-card span {
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+
+  /* ==========================================================================
+     3. 상단 12대 아카이브 직행 바 (모바일 첫화면 다이어트: 2열 상단 + 1줄 가로 스와이프 바)
+     ========================================================================== */
+  html:not(.pc-override) .kkumdido-12halls-bar {
+    padding: 6px 10px !important;
+    background: #1C1713 !important;
+    border-bottom: 1px solid rgba(197, 155, 56, 0.28) !important;
+  }
+
+  html:not(.pc-override) .kkumdido-12halls-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 5px !important;
+  }
+
+  html:not(.pc-override) .kkumdido-12halls-left {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    width: 100% !important;
+    padding-right: 0 !important;
+    padding-bottom: 4px !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.18) !important;
+  }
+
+  html:not(.pc-override) .kkumdido-12halls-badge,
+  html:not(.pc-override) .kkumdido-12halls-genealogy {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 30px !important;
+    font-size: 11.5px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  html:not(.pc-override) .kkumdido-12halls-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 5px !important;
+    width: 100% !important;
+    padding-bottom: 2px !important;
+  }
+  html:not(.pc-override) .kkumdido-12halls-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .kkumdido-12halls-grid a {
+    flex: 0 0 auto !important;
+    font-size: 11.5px !important;
+    min-height: 30px !important;
+    padding: 4px 9px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(212, 175, 55, 0.24) !important;
+    border-radius: 999px !important;
+    color: #EAE0CE !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+  }
+
+  html:not(.pc-override) .kkumdido-12halls-grid a::before {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .kkumdido-12halls-grid a span.h-no {
+    color: #E5C878 !important;
+    margin-right: 3px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+  }
+
+  /* ==========================================================================
+     4. 웰컴 리본 바 (모바일 1줄 슬림 배너로 압축)
+     ========================================================================== */
+  html:not(.pc-override) .kkumbaon-welcome-bar {
+    padding: 6px 12px !important;
+  }
+
+  html:not(.pc-override) .kkumbaon-welcome-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 2px !important;
+  }
+
+  html:not(.pc-override) .kw-eyebrow,
+  html:not(.pc-override) .kw-quote {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .kw-headline {
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-weight: 700 !important;
+  }
+
+  /* ==========================================================================
+     5. 탐험 홀 인트로 & 소장 통계 카드 (슬림 1줄 타이틀 + 4열 통계)
+     ========================================================================== */
+  html:not(.pc-override) .hall-intro {
+    padding: 6px 0 6px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+
+  html:not(.pc-override) .hall-intro .eyebrow,
+  html:not(.pc-override) .hall-intro p {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .hall-intro h1 {
+    font-size: 16.5px !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.5px !important;
+    margin: 0 !important;
+  }
+
+  html:not(.pc-override) .hall-stats {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    width: 100% !important;
+  }
+
+  html:not(.pc-override) .hall-stats > div {
+    min-width: 0 !important;
+    padding: 5px 4px !important;
+    border-radius: 7px !important;
+    background: rgba(255, 255, 255, 0.55) !important;
+    border: 1px solid rgba(197, 155, 56, 0.25) !important;
+    text-align: center !important;
+  }
+
+  html:not(.pc-override) body.dark-theme .hall-stats > div {
+    background: rgba(255, 255, 255, 0.04) !important;
+  }
+
+  html:not(.pc-override) .hall-stats strong {
+    font-size: 14px !important;
+    display: block !important;
+    line-height: 1.15 !important;
+    font-weight: 800 !important;
+  }
+
+  html:not(.pc-override) .hall-stats span {
+    font-size: 10.5px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+    margin-top: 2px !important;
+    color: var(--text-muted, #6E5F4B) !important;
+  }
+
+  /* ==========================================================================
+     6. 사서실 공지 바 (KNB - 1줄 슬림 바)
+     ========================================================================== */
+  html:not(.pc-override) .kkumdido-notice-board {
+    margin: 4px 0 8px !important;
+    padding: 0 !important;
+  }
+
+  html:not(.pc-override) .knb-bar {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    padding: 6px 10px !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not(.pc-override) .knb-left {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    overflow: hidden !important;
+  }
+
+  html:not(.pc-override) .knb-badge {
+    font-size: 10.5px !important;
+    padding: 2px 7px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  html:not(.pc-override) .knb-tag,
+  html:not(.pc-override) .knb-date,
+  html:not(.pc-override) .knb-nav-btn {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .knb-headline-link {
+    display: block !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    font-size: 11.5px !important;
+    line-height: 1.3 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    margin-top: 0 !important;
+  }
+
+  html:not(.pc-override) .knb-right {
+    display: flex !important;
+    justify-content: flex-end !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
+    gap: 4px !important;
+  }
+
+  html:not(.pc-override) .knb-expand-btn {
+    font-size: 10.5px !important;
+    padding: 2px 8px !important;
+    height: 26px !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  html:not(.pc-override) .knb-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ==========================================================================
+     7. 시그니처 영상 스테이지 & 지도 툴바
+     ========================================================================== */
+  html:not(.pc-override) #kkumdidoSignatureStage {
+    margin: 6px 0 10px !important;
+    padding: 0 !important;
+  }
+
+  html:not(.pc-override) .sig-stage-card {
+    border-radius: 10px !important;
+    padding: 8px !important;
+  }
+
+  html:not(.pc-override) .hall-toolbar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-bottom: 6px !important;
+  }
+
+  html:not(.pc-override) .place-search-wrap {
+    width: 100% !important;
+    order: 1 !important;
+    margin-left: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not(.pc-override) .place-search-wrap input {
+    height: 34px !important;
+    font-size: 12px !important;
+    padding: 4px 10px 4px 30px !important;
+  }
+
+  html:not(.pc-override) .region-tabs {
+    width: 100% !important;
+    order: 2 !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 5px !important;
+  }
+
+  html:not(.pc-override) .region-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .region-tabs button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 11.5px !important;
+    padding: 6px 10px !important;
+    min-height: 32px !important;
+    border-radius: 6px !important;
+  }
+
+  /* ==========================================================================
+     8. 성경세계지도 아틀라스 & 도시 팝오버
+     ========================================================================== */
+  html:not(.pc-override) .atlas-viewport {
+    width: 100% !important;
+    height: 290px !important;
+    min-height: 270px !important;
+    border-radius: 10px !important;
+    position: relative !important;
+  }
+
+  html:not(.pc-override) .map-heading {
+    top: 8px !important;
+    left: 10px !important;
+  }
+
+  html:not(.pc-override) .map-region-name {
+    font-size: 14px !important;
+  }
+
+  html:not(.pc-override) .city-popover {
+    top: auto !important;
+    bottom: 8px !important;
+    left: 8px !important;
+    right: 8px !important;
+    width: auto !important;
+    max-width: calc(100% - 16px) !important;
+    max-height: 52vh !important;
+    border-radius: 10px !important;
+    padding: 10px 12px !important;
+    z-index: 100 !important;
+    font-size: 12px !important;
+  }
+
+  /* ==========================================================================
+     9. 서브페이지(대백과, 12대 아카이브, 스튜디오) 균형 스케일링
+        (글자 11~14px, 버튼 32px 확보, 가로 넘침 원천 차단)
+     ========================================================================== */
+  html:not(.pc-override):not(.is-3d-chapel-page) .top-bar,
+  html:not(.pc-override) .top-header,
+  html:not(.pc-override) .header-inner {
+    padding: 8px 10px !important;
+    gap: 6px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  /* 12대 아카이브 헤더 글자 넘침 원천 방어 */
+  html:not(.pc-override) .brand,
+  html:not(.pc-override) .brand h1,
+  html:not(.pc-override) .brand p,
+  html:not(.pc-override) .brand-eyebrow {
+    white-space: normal !important;
+    word-break: keep-all !important;
+    overflow-wrap: break-word !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not(.pc-override) .brand-box,
+  html:not(.pc-override) .brand-area {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    max-width: 100% !important;
+  }
+
+  html:not(.pc-override) .brand-badge,
+  html:not(.pc-override) .logos-badge,
+  html:not(.pc-override) .brand-eyebrow,
+  html:not(.pc-override) .hero-badge {
+    font-size: 11px !important;
+    padding: 3px 8px !important;
+    border-radius: 6px !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+    width: auto !important;
+  }
+
+  html:not(.pc-override) .brand-title,
+  html:not(.pc-override) .brand h1,
+  html:not(.pc-override) .app-title {
+    font-size: 15px !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+    font-weight: 700 !important;
+  }
+
+  html:not(.pc-override) .brand-sub,
+  html:not(.pc-override) .app-subtitle {
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+
+  html:not(.pc-override) .top-actions,
+  html:not(.pc-override) .header-actions,
+  html:not(.pc-override) .header-right {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+    width: 100% !important;
+  }
+
+  html:not(.pc-override) .btn-top,
+  html:not(.pc-override) .header-actions .btn,
+  html:not(.pc-override) .top-actions .btn,
+  html:not(.pc-override) .chip-btn,
+  html:not(.pc-override) .mini-btn {
+    font-size: 11.5px !important;
+    padding: 6px 10px !important;
+    min-height: 32px !important;
+    border-radius: 6px !important;
+    line-height: 1.25 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  html:not(.pc-override) .hero-wrap {
+    padding: 6px 8px !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not(.pc-override) .hero-banner,
+  html:not(.pc-override) .hero {
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    gap: 6px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not(.pc-override) .hero-eyebrow {
+    font-size: 11px !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 2px !important;
+  }
+
+  html:not(.pc-override) .hero-title,
+  html:not(.pc-override) .hero-text h2,
+  html:not(.pc-override) .hero h1 {
+    font-size: 16px !important;
+    line-height: 1.3 !important;
+    margin: 2px 0 !important;
+  }
+
+  html:not(.pc-override) .hero-sub,
+  html:not(.pc-override) .hero-text p {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+    margin: 2px 0 !important;
+  }
+
+  /* 서브페이지 통계 박스: 3열/4열 1줄 (폰트 15px/11px) */
+  html:not(.pc-override) .hero-stats {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+    width: 100% !important;
+    margin-top: 6px !important;
+  }
+
+  html:not(.pc-override) .stat-card,
+  html:not(.pc-override) .stat-pill {
+    padding: 6px 5px !important;
+    border-radius: 8px !important;
+    min-width: 0 !important;
+    text-align: center !important;
+  }
+
+  html:not(.pc-override) .stat-num,
+  html:not(.pc-override) .stat-val,
+  html:not(.pc-override) .stat-pill .num {
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    display: block !important;
+    font-weight: 800 !important;
+  }
+
+  html:not(.pc-override) .stat-label,
+  html:not(.pc-override) .stat-lbl,
+  html:not(.pc-override) .stat-pill .lbl {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    margin-top: 2px !important;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* 인물대백과 연대기 가로 넘침 완벽 해결 (minmax 0 1fr) */
+  html:not(.pc-override) .era-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not(.pc-override) .era-label-box {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(200, 157, 70, 0.2) !important;
+    padding-right: 0 !important;
+    padding-bottom: 8px !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  html:not(.pc-override) .era-step-tag,
+  html:not(.pc-override) .era-step-name,
+  html:not(.pc-override) .era-step-sub {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+  }
+
+  /* 필터·탭·검색바 터치 32px 확보 */
+  html:not(.pc-override) .theme-nav-wrap,
+  html:not(.pc-override) .timeline-nav-wrap,
+  html:not(.pc-override) .filter-bar-wrap,
+  html:not(.pc-override) .compare-bar-wrap,
+  html:not(.pc-override) .grid-wrap {
+    padding: 6px 10px !important;
+  }
+
+  html:not(.pc-override) .filter-bar,
+  html:not(.pc-override) .axis-tabs,
+  html:not(.pc-override) .quick-tags {
+    gap: 5px !important;
+    padding: 5px 6px !important;
+    flex-wrap: wrap !important;
+  }
+
+  html:not(.pc-override) .filter-btn,
+  html:not(.pc-override) .axis-tab,
+  html:not(.pc-override) .theme-btn,
+  html:not(.pc-override) .era-btn,
+  html:not(.pc-override) .q-tag,
+  html:not(.pc-override) .tab-btn,
+  html:not(.pc-override) .hall-pill,
+  html:not(.pc-override) .glossary-cat-pill {
+    font-size: 11.5px !important;
+    padding: 5px 9px !important;
+    min-height: 32px !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  html:not(.pc-override) .search-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin: 8px 0 !important;
+    width: 100% !important;
+  }
+
+  html:not(.pc-override) .search-row .search-input {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    height: 34px !important;
+    font-size: 12px !important;
+    padding: 4px 10px !important;
+  }
+
+  html:not(.pc-override) .search-row .btn {
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 11px !important;
+    font-size: 11.5px !important;
+    white-space: nowrap !important;
+    width: auto !important;
+  }
+
+  /* 도서관 서가 & 카드 피드 */
+  html:not(.pc-override) h2,
+  html:not(.pc-override) .section-title {
+    font-size: 16px !important;
+    line-height: 1.3 !important;
+  }
+
+  html:not(.pc-override) h3,
+  html:not(.pc-override) .card-title,
+  html:not(.pc-override) .p-name,
+  html:not(.pc-override) .e-title,
+  html:not(.pc-override) .b-title,
+  html:not(.pc-override) .ver-title {
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+  }
+
+  html:not(.pc-override) p,
+  html:not(.pc-override) .card-desc,
+  html:not(.pc-override) .p-summary,
+  html:not(.pc-override) .e-summary,
+  html:not(.pc-override) .b-summary {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+
+  html:not(.pc-override) .controls-wrap .hall-tabs {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 5px !important;
+    padding-bottom: 5px !important;
+    scrollbar-width: none !important;
+  }
+
+  html:not(.pc-override) .controls-wrap .hall-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .hall-tab {
+    flex-shrink: 0 !important;
+    min-width: 72px !important;
+    min-height: 32px !important;
+    padding: 5px 9px !important;
+    font-size: 11.5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  html:not(.pc-override) .archive-grid,
+  html:not(.pc-override) .featured-grid,
+  html:not(.pc-override) .story-grid,
+  html:not(.pc-override) .cinema-studio-grid,
+  html:not(.pc-override) .behinds-grid,
+  html:not(.pc-override) .events-grid,
+  html:not(.pc-override) .p-grid,
+  html:not(.pc-override) .art-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  html:not(.pc-override) .archive-card,
+  html:not(.pc-override) .place-card,
+  html:not(.pc-override) .story-card,
+  html:not(.pc-override) .p-card,
+  html:not(.pc-override) .event-card,
+  html:not(.pc-override) .behind-card,
+  html:not(.pc-override) .version-card,
+  html:not(.pc-override) .module-card,
+  html:not(.pc-override) .dept-card,
+  html:not(.pc-override) .studio-tab-card {
+    padding: 10px 12px !important;
+    border-radius: 9px !important;
+  }
+
+  /* ==========================================================================
+     9-A. 말씀·설교 스튜디오 넘침 완벽 해결
+     ========================================================================== */
+  html:not(.pc-override) .mobile-pc-notice {
+    padding: 7px 10px !important;
+    font-size: 11.5px !important;
+  }
+
+  /* 설교 준비 노트 만들기 버튼 줄 wrap 및 전체 폭 */
+  html:not(.pc-override) div[style*="gap:6px"][style*="display:flex"] {
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    gap: 5px !important;
+  }
+
+  html:not(.pc-override) div[style*="gap:6px"][style*="display:flex"] > button {
+    width: 100% !important;
+    min-height: 34px !important;
+    font-size: 12px !important;
+    margin-top: 2px !important;
+  }
+
+  /* ==========================================================================
+     9-B. 52주 가정예배 스튜디오 목차표 넘침 & 상단바 겹침 해결
+     ========================================================================== */
+  html:not(.pc-override) #kkd-studio-topbar {
+    z-index: 800 !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    padding: 8px 10px !important;
+    font-size: 11.5px !important;
+  }
+
+  html:not(.pc-override) #kkd-studio-topbar > div {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  html:not(.pc-override) #kkd-studio-topbar select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    height: 34px !important;
+    font-size: 12px !important;
+  }
+
+  html:not(.pc-override) table.toc-table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    font-size: 11.5px !important;
+  }
+
+  html:not(.pc-override) table.toc-table th,
+  html:not(.pc-override) table.toc-table td {
+    padding: 6px 8px !important;
+    font-size: 11.5px !important;
+  }
+
+  html:not(.pc-override) .page {
+    padding: 14px 10px !important;
+    margin: 8px auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  html:not(.pc-override) .page-header {
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not(.pc-override) .season-label {
+    white-space: normal !important;
+    word-break: keep-all !important;
+  }
+
+  /* 도서관 이용증 로그인 모달 z-index 최상위 보장 */
+  #kkumdido-shield-modal {
+    z-index: 100050 !important;
+  }
+  .kkd-modal {
+    z-index: 100051 !important;
+  }
+  .kkd-eyebrow {
+    margin-right: 68px !important;
+  }
+
+  /* ==========================================================================
+     10. 🕊️ 3D 온라인 예배당 & 🏛️ 꿈디도 아트리움 묵상원 모바일 HUD (완전 시야 확보 에디션)
+     ========================================================================== */
+  html:not(.pc-override).is-3d-chapel-page #btn-chapel-home-mobile,
+  html:not(.pc-override) body.is-3d-chapel-page #btn-chapel-home-mobile,
+  .is-3d-chapel-page #btn-chapel-home-mobile {
+    display: inline-flex !important;
+  }
+
+  html:not(.pc-override).is-3d-chapel-page .kkumdido-mobile-tab-bar,
+  html:not(.pc-override) body.is-3d-chapel-page .kkumdido-mobile-tab-bar,
+  .is-3d-chapel-page .kkumdido-mobile-tab-bar {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .chapel-boot {
+    padding: 16px 14px !important;
+  }
+
+  html:not(.pc-override) .chapel-boot .boot-mark svg {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  html:not(.pc-override) .chapel-boot h1 {
+    font-size: 22px !important;
+    letter-spacing: 2px !important;
+  }
+
+  html:not(.pc-override) .chapel-boot .boot-sub {
+    font-size: 12px !important;
+    margin-top: 6px !important;
+  }
+
+  html:not(.pc-override) .chapel-boot .boot-verse {
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+    margin: 10px 0 12px !important;
+    line-height: 1.55 !important;
+  }
+
+  html:not(.pc-override) .chapel-boot .boot-avatar-box {
+    padding: 10px 12px !important;
+    margin-bottom: 10px !important;
+    gap: 6px !important;
+  }
+
+  html:not(.pc-override) .chapel-boot .boot-gender-btn {
+    padding: 7px 10px !important;
+    min-height: 32px !important;
+    font-size: 12px !important;
+  }
+
+  html:not(.pc-override) .chapel-boot .boot-btn-primary {
+    padding: 12px 18px !important;
+    min-height: 42px !important;
+    font-size: 13.5px !important;
+  }
+
+  html:not(.pc-override) .chapel-boot .boot-btn-secondary {
+    padding: 8px 12px !important;
+    min-height: 32px !important;
+    font-size: 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  html:not(.pc-override) .avatar-label {
+    padding: 3px 9px !important;
+    font-size: 11px !important;
+    gap: 4px !important;
+  }
+
+  html:not(.pc-override) .avatar-bubble {
+    padding: 4px 9px !important;
+    font-size: 11.5px !important;
+  }
+
+  /* 3D 예배당 상단 HUD 바: 홈페이지형 가로 헤더 바 (상단 겹침 원천 차단) */
+  html:not(.pc-override).is-3d-chapel-page .top-bar,
+  html:not(.pc-override) body.is-3d-chapel-page .top-bar,
+  html:not(.pc-override) #canvas-wrap ~ .top-bar,
+  .is-3d-chapel-page .top-bar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    min-height: 38px !important;
+    width: 100vw !important;
+    padding: max(4px, env(safe-area-inset-top)) 6px 4px 6px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    z-index: 100 !important;
+  }
+  html:not(.pc-override).is-3d-chapel-page .top-bar::-webkit-scrollbar,
+  html:not(.pc-override) body.is-3d-chapel-page .top-bar::-webkit-scrollbar,
+  html:not(.pc-override) #canvas-wrap ~ .top-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html:not(.pc-override).is-3d-chapel-page .top-bar .top-left,
+  html:not(.pc-override).is-3d-chapel-page .top-bar .top-right,
+  html:not(.pc-override) body.is-3d-chapel-page .top-bar .top-left,
+  html:not(.pc-override) body.is-3d-chapel-page .top-bar .top-right,
+  html:not(.pc-override) #canvas-wrap ~ .top-bar .top-left,
+  html:not(.pc-override) #canvas-wrap ~ .top-bar .top-right,
+  .is-3d-chapel-page .top-left,
+  .is-3d-chapel-page .top-right {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    flex-shrink: 0 !important;
+    gap: 4px !important;
+    width: auto !important;
+    align-items: center !important;
+  }
+
+  /* 상단 내 아바타 꾸미기 버튼은 모바일에서 숨김 (하단 바텀 독 버튼으로 일원화) */
+  html:not(.pc-override) #btn-avatar-modal,
+  .is-3d-chapel-page #btn-avatar-modal {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .hud-pill {
+    padding: 4px 8px !important;
+    min-height: 28px !important;
+    height: 28px !important;
+    font-size: 10.5px !important;
+    gap: 4px !important;
+    border-width: 1px !important;
+    border-radius: 5px !important;
+    box-shadow: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  html:not(.pc-override) .hud-pill .live-dot {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  html:not(.pc-override) #btn-zoom-in,
+  html:not(.pc-override) #btn-zoom-out,
+  html:not(.pc-override) #btn-kk-zoom-in,
+  html:not(.pc-override) #btn-kk-zoom-out {
+    display: none !important;
+  }
+
+  /* 3D 예배당 상태 배너: 기본 접힘/숨김, 상태 변경 시 상단 헤더 아래 직사각 보드로 잠시 표시 */
+  html:not(.pc-override) .status-banner,
+  .is-3d-chapel-page .status-banner {
+    top: calc(max(4px, env(safe-area-inset-top)) + 40px) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    padding: 5px 12px !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    border-radius: 6px !important;
+    width: auto !important;
+    max-width: calc(100vw - 20px) !important;
+    white-space: normal !important;
+    word-break: keep-all !important;
+    text-align: center !important;
+    background: rgba(20, 16, 12, 0.94) !important;
+    border: 1px solid rgba(212, 168, 83, 0.48) !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    transition: opacity 0.3s ease, transform 0.25s ease !important;
+    z-index: 90 !important;
+  }
+  html:not(.pc-override) .status-banner.is-faded,
+  .is-3d-chapel-page .status-banner.is-faded {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateX(-50%) translateY(-6px) !important;
+  }
+
+  /* 모바일 대화창 스택: 좌하단 홈페이지 가로 게시판 스타일 */
+  html:not(.pc-override) .chapel-chat-stack,
+  .is-3d-chapel-page .chapel-chat-stack {
+    left: 6px !important;
+    right: 6px !important;
+    bottom: calc(max(4px, env(safe-area-inset-bottom)) + 44px) !important;
+    width: auto !important;
+    max-width: calc(100vw - 12px) !important;
+    gap: 4px !important;
+    z-index: 85 !important;
+  }
+
+  html:not(.pc-override) .chapel-chatlog,
+  .is-3d-chapel-page .chapel-chatlog {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-radius: 6px !important;
+    background: rgba(18, 14, 11, 0.94) !important;
+    border: 1px solid rgba(212, 168, 83, 0.45) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+    transition: all 0.22s ease !important;
+  }
+
+  /* 대화창이 접혀 있을 때: 깔끔한 직사각 가로 게시판 헤더 바만 표시 */
+  html:not(.pc-override) .chapel-chatlog.is-collapsed,
+  html:not(.pc-override) .chapel-chatlog.is-folded,
+  .is-3d-chapel-page .chapel-chatlog.is-collapsed,
+  .is-3d-chapel-page .chapel-chatlog.is-folded {
+    margin-top: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  html:not(.pc-override) .chapel-chatlog.is-collapsed .chatlog-tab-toggle,
+  html:not(.pc-override) .chapel-chatlog.is-folded .chatlog-tab-toggle,
+  .is-3d-chapel-page .chapel-chatlog.is-collapsed .chatlog-tab-toggle,
+  .is-3d-chapel-page .chapel-chatlog.is-folded .chatlog-tab-toggle {
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    height: 30px !important;
+    padding: 0 12px !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    border-radius: 6px !important;
+    background: rgba(20, 16, 12, 0.94) !important;
+    border: 1px solid rgba(212, 168, 83, 0.5) !important;
+    color: #F5DF98 !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    cursor: pointer !important;
+  }
+
+  /* 접혀 있을 때 차단 버튼, 채팅 리스트, 입력창, 퀵 액션 완전 숨김 */
+  html:not(.pc-override) .chapel-chatlog.is-collapsed .chatlog-tab-block,
+  html:not(.pc-override) .chapel-chatlog.is-folded .chatlog-tab-block,
+  .is-3d-chapel-page .chapel-chatlog.is-collapsed .chatlog-tab-block,
+  .is-3d-chapel-page .chapel-chatlog.is-folded .chatlog-tab-block,
+  html:not(.pc-override) .chapel-chat-stack.is-collapsed .chapel-chat-list,
+  html:not(.pc-override) .chapel-chat-stack.is-collapsed .quick-action-row,
+  html:not(.pc-override) .chapel-chat-stack.is-collapsed .chapel-chatbar,
+  .is-3d-chapel-page .chapel-chat-stack.is-collapsed .chapel-chat-list,
+  .is-3d-chapel-page .chapel-chat-stack.is-collapsed .quick-action-row,
+  .is-3d-chapel-page .chapel-chat-stack.is-collapsed .chapel-chatbar,
+  html:not(.pc-override) .chapel-chatlog.is-collapsed .chapel-chat-list,
+  html:not(.pc-override) .chapel-chatlog.is-folded .chapel-chat-list,
+  html:not(.pc-override) .chapel-chatlog.is-collapsed + .quick-action-row,
+  html:not(.pc-override) .chapel-chatlog.is-folded + .quick-action-row,
+  html:not(.pc-override) .chapel-chatlog.is-collapsed ~ .quick-action-row,
+  html:not(.pc-override) .chapel-chatlog.is-folded ~ .quick-action-row,
+  html:not(.pc-override) .chapel-chatlog.is-collapsed + .chapel-chatbar,
+  html:not(.pc-override) .chapel-chatlog.is-folded + .chapel-chatbar,
+  html:not(.pc-override) .chapel-chatlog.is-collapsed ~ .chapel-chatbar,
+  html:not(.pc-override) .chapel-chatlog.is-folded ~ .chapel-chatbar,
+  .is-3d-chapel-page .chapel-chatlog.is-collapsed .chapel-chat-list,
+  .is-3d-chapel-page .chapel-chatlog.is-folded .chapel-chat-list,
+  .is-3d-chapel-page .chapel-chatlog.is-collapsed ~ .quick-action-row,
+  .is-3d-chapel-page .chapel-chatlog.is-folded ~ .quick-action-row,
+  .is-3d-chapel-page .chapel-chatlog.is-collapsed ~ .chapel-chatbar,
+  .is-3d-chapel-page .chapel-chatlog.is-folded ~ .chapel-chatbar {
+    display: none !important;
+  }
+
+  /* 펼쳐졌을 때: 채팅 목록 높이 72px 콤팩트 */
+  html:not(.pc-override) .chapel-chat-list,
+  .is-3d-chapel-page .chapel-chat-list {
+    max-height: 72px !important;
+    padding: 4px 8px 6px !important;
+    gap: 3px !important;
+  }
+
+  html:not(.pc-override) .chapel-chat-list li,
+  .is-3d-chapel-page .chapel-chat-list li {
+    font-size: 11.5px !important;
+    line-height: 1.35 !important;
+    padding: 2px 6px !important;
+    gap: 4px !important;
+  }
+
+  html:not(.pc-override) .chapel-chat-list .chat-who,
+  .is-3d-chapel-page .chapel-chat-list .chat-who {
+    font-size: 11.5px !important;
+    white-space: nowrap !important;
+    font-weight: 700 !important;
+  }
+
+  /* 모바일에서 빠른 액션 바: 펼쳤을 때 1줄 직사각 보드 */
+  html:not(.pc-override) .quick-action-row,
+  .is-3d-chapel-page .quick-action-row {
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 3px !important;
+    padding: 3px !important;
+    border-radius: 6px !important;
+    background: rgba(18, 14, 11, 0.94) !important;
+  }
+
+  html:not(.pc-override) .emote-pill-btn,
+  .is-3d-chapel-page .emote-pill-btn {
+    padding: 4px 2px !important;
+    min-height: 26px !important;
+    font-size: 9.5px !important;
+    border-radius: 5px !important;
+    gap: 1px !important;
+    letter-spacing: -0.4px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+  }
+
+  html:not(.pc-override) .chapel-chatbar,
+  .is-3d-chapel-page .chapel-chatbar {
+    padding: 3px 4px 3px 10px !important;
+    border-width: 1px !important;
+    background: rgba(18, 14, 11, 0.96) !important;
+    min-height: 32px !important;
+    border-radius: 6px !important;
+  }
+
+  html:not(.pc-override) .chapel-chatbar input,
+  .is-3d-chapel-page .chapel-chatbar input {
+    font-size: 12px !important;
+    padding: 3px 0 !important;
+  }
+
+  html:not(.pc-override) .chapel-chatbar button,
+  .is-3d-chapel-page .chapel-chatbar button {
+    height: 26px !important;
+    padding: 0 9px !important;
+    border-radius: 4px !important;
+    font-size: 11.5px !important;
+  }
+
+  /* 하단 바텀 독 (홈페이지 가로 툴바 스타일) */
+  html:not(.pc-override) .bottom-dock,
+  .is-3d-chapel-page .bottom-dock {
+    position: fixed !important;
+    bottom: max(4px, env(safe-area-inset-bottom)) !important;
+    left: 6px !important;
+    right: 6px !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: calc(100vw - 12px) !important;
+    height: 38px !important;
+    padding: 3px 4px !important;
+    gap: 3px !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background: rgba(18, 14, 11, 0.95) !important;
+    border: 1px solid rgba(212, 168, 83, 0.48) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5) !important;
+    z-index: 95 !important;
+  }
+
+  /* 모바일 바텀 독에서 모든 핵심 버튼 살리기 */
+  html:not(.pc-override) #dock-sit,
+  html:not(.pc-override) #dock-kneel,
+  html:not(.pc-override) #dock-avatar,
+  html:not(.pc-override) #dock-word,
+  .is-3d-chapel-page #dock-sit,
+  .is-3d-chapel-page #dock-kneel,
+  .is-3d-chapel-page #dock-avatar,
+  .is-3d-chapel-page #dock-word {
+    display: inline-flex !important;
+  }
+
+  html:not(.pc-override) .dock-btn,
+  .is-3d-chapel-page .dock-btn {
+    flex: 1 1 0 !important;
+    justify-content: center !important;
+    padding: 3px 2px !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    font-size: 10px !important;
+    gap: 2px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(212, 168, 83, 0.2) !important;
+    border-radius: 5px !important;
+    color: #eddcc0 !important;
+    white-space: nowrap !important;
+  }
+
+  html:not(.pc-override) .dock-btn .shortcut,
+  .is-3d-chapel-page .dock-btn .shortcut {
+    display: none !important;
+  }
+
+  html:not(.pc-override) .dock-btn span.label-text,
+  .is-3d-chapel-page .dock-btn span.label-text {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+  }
+
+  html:not(.pc-override) .dock-btn {
+    flex: 1 1 0 !important;
+    justify-content: center !important;
+    padding: 4px 3px !important;
+    min-height: 30px !important;
+    font-size: 10px !important;
+    gap: 2px !important;
+    display: flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+  }
+
+  html:not(.pc-override) .dock-btn span.label-text {
+    font-size: 10px !important;
+    letter-spacing: -0.3px !important;
+  }
+
+  html:not(.pc-override) .dock-btn .shortcut,
+  html:not(.pc-override) .control-hint {
+    display: none !important;
+  }
+
+  /* 3D 예배당/묵상원 내부에서는 도서관 이용증 우하단 플로팅 배지 숨김 (하단 버튼 겹침 방지) */
+  html:not(.pc-override).is-3d-chapel-page #kkumdido-pass-fab,
+  html:not(.pc-override) body.is-3d-chapel-page #kkumdido-pass-fab {
+    display: none !important;
+  }
+
+  /* 온라인 예배당 허브(online_chapel_hub.html) 비교표 가로 스크롤 */
+  html:not(.pc-override) table.comp-table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  html:not(.pc-override) .comp-table th,
+  html:not(.pc-override) .comp-table td {
+    padding: 8px 10px !important;
+    font-size: 11.5px !important;
+    min-width: 110px !important;
+  }
+
+  html:not(.pc-override) .floating-panel {
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 42px !important;
+    width: auto !important;
+    max-height: 62vh !important;
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+    gap: 8px !important;
+  }
+
+  html:not(.pc-override) .panel-title {
+    font-size: 14px !important;
+  }
+
+  html:not(.pc-override) .verse-display {
+    font-size: 13.5px !important;
+    min-height: 60px !important;
+    line-height: 1.65 !important;
+  }
+
+  /* ==========================================================================
+     11. 리더 모달 및 푸터 & 플로팅 배지
+     ========================================================================== */
+  html:not(.pc-override) .reader-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+    z-index: 99999 !important;
+  }
+
+  html:not(.pc-override) footer {
+    padding: 18px 12px 68px !important;
+    text-align: center !important;
+    font-size: 11.5px !important;
+  }
+
+  /* 도서관 이용증 우측 하단 플로팅 바 (터치 영역 확보 + 탭바 위 깔끔한 안착) */
+  html:not(.pc-override) #kkumdido-pass-fab {
+    bottom: 54px !important;
+    right: 8px !important;
+    transform: scale(0.85) !important;
+    transform-origin: bottom right !important;
+    opacity: 0.95 !important;
+    z-index: 9980 !important;
+  }
+}
+
+/* ==========================================================================
+   🏛️ 모바일 전용 고정 엄지 탭바 (높이 48px, 터치 높이 48px 확보)
+   ========================================================================== */
+.kkumdido-mobile-tab-bar {
+  display: none;
+}
+
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
+  html:not(.pc-override):not(.is-3d-chapel-page) .kkumdido-mobile-tab-bar {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 48px !important;
+    height: calc(48px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    background: rgba(20, 16, 13, 0.98) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-top: 1px solid rgba(197, 155, 56, 0.35) !important;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.45) !important;
+    z-index: 9999 !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    box-sizing: border-box !important;
+  }
+
+  .kkumdido-mobile-tab-item {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    height: 100% !important;
+    color: #C7BCAE !important;
+    text-decoration: none !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 2px 0 !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .kkumdido-mobile-tab-item .tab-icon {
+    font-size: 15px !important;
+    line-height: 1 !important;
+  }
+
+  .kkumdido-mobile-tab-item.active {
+    color: #F5DF98 !important;
+  }
+}
+
+/* ==========================================================================
+   🖥️ PC ↔ 📱 모바일 모드 수동 전환 스위처
+   ========================================================================== */
+.kkumdido-mode-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  min-height: 32px;
+  border-radius: 20px;
+  background: rgba(140, 98, 30, 0.18);
+  border: 1px solid rgba(197, 155, 56, 0.45);
+  color: #8C621E;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.kkumdido-pc-override-banner {
+  display: none !important;
+}
+
+@media (max-width: 1024px) {
+  html.pc-override .kkumdido-pc-override-banner {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: #241A10;
+    color: #F5DF98;
+    font-size: 11.5px;
+    font-weight: 700;
+    border-bottom: 1px solid #B89446;
+    position: sticky;
+    top: 0;
+    z-index: 10001;
+  }
+
+  html.pc-override .kkumdido-pc-override-banner button {
+    padding: 4px 10px;
+    min-height: 30px;
+    border-radius: 10px;
+    background: #C59B38;
+    color: #161311;
+    border: none;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+}
