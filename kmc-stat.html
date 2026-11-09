@@ -1,0 +1,4526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#111E32">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="감리교통계스튜디오">
+<meta property="og:title" content="기독교대한감리회 통계서기 엑셀스튜디오 v2.0">
+<meta property="og:description" content="지방회 통계표 엑셀 입력 · 실시간 양식 2-1 집계 · 서울연회 관리자 통합 웹앱">
+<title>기독교대한감리회 통계서기 엑셀스튜디오 v2.0 — 지방회 입력 & 서울연회 관리자 통합</title>
+<!-- SheetJS (엑셀 입출력 지원) -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-page: #F4F6F9;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #EAEFF5;
+  --bg-navy: #111E32;
+  --bg-navy-light: #1B3050;
+  --ink-primary: #18202F;
+  --ink-secondary: #4A5568;
+  --ink-muted: #718096;
+  --accent-crimson: #9E1B24;
+  --accent-crimson-light: #FDF2F2;
+  --accent-gold: #B47814;
+  --accent-gold-light: #FEF9EE;
+  --accent-blue: #1B59B3;
+  --accent-blue-light: #EBF3FC;
+  --accent-emerald: #13774B;
+  --accent-emerald-light: #ECF8F2;
+  --border-light: #DCE3EC;
+  --border-strong: #A0AEC0;
+  --grid-line: #E2E8F0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(17,30,50,0.08);
+  --shadow-lg: 0 10px 30px rgba(17,30,50,0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--ink-primary);
+  line-height: 1.5;
+  font-size: 15px; /* 시니어 눈높이 15px 기본 */
+  -webkit-font-smoothing: antialiased;
+}
+.num, .mono {
+  font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 상단 마스터 헤더 & 모드 스위처 */
+.master-header {
+  background: linear-gradient(135deg, #0F1C30 0%, #1A2F50 100%);
+  color: #FFFFFF;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3px solid #C89B3C;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.kmc-cross {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #A81B24 0%, #7A1016 100%);
+  border: 2px solid #E5C168;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: #FFF;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.brand-title h1 {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: rgba(229, 193, 104, 0.2);
+  color: #F6D88B;
+  border: 1px solid rgba(229, 193, 104, 0.4);
+}
+.brand-desc {
+  font-size: 12.5px;
+  color: #A0B3D0;
+  margin-top: 2px;
+}
+
+/* 모드 전환 토글 스위치 (지방회 모드 vs 서울연회 관리자 모드) */
+.mode-switch-box {
+  display: flex;
+  background: rgba(0,0,0,0.35);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.mode-btn {
+  padding: 8px 18px;
+  font-size: 14.5px;
+  font-weight: 700;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: #CBD5E1;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mode-btn.active {
+  background: #C89B3C;
+  color: #111E32;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.mode-btn:hover:not(.active) {
+  background: rgba(255,255,255,0.08);
+  color: #FFF;
+}
+
+/* 헤더 우측 유틸 */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.save-status-badge {
+  font-size: 13px;
+  font-weight: 600;
+  color: #A7F3D0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.15);
+  padding: 5px 12px;
+  border-radius: 99px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.save-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+}
+
+/* 메타 컨트롤 바 (지방회, 연도, 서기, 감리사 설정) */
+.meta-ctrl-bar {
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--border-light);
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.meta-inputs-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+}
+.meta-item input, .meta-item select {
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border: 1.5px solid var(--border-light);
+  border-radius: 6px;
+  background: #FAFBFD;
+  color: var(--ink-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.meta-item input:focus, .meta-item select:focus {
+  border-color: var(--accent-blue);
+  background: #FFF;
+}
+
+/* 탭 네비게이션 */
+.main-tabs-wrap {
+  background: #FFFFFF;
+  padding: 0 28px;
+  border-bottom: 1.5px solid var(--border-light);
+  display: flex;
+  gap: 4px;
+}
+.tab-btn {
+  padding: 13px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-secondary);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tab-btn:hover {
+  color: var(--accent-blue);
+  background: #F8FAFD;
+}
+.tab-btn.active {
+  color: var(--accent-navy);
+  border-bottom-color: var(--accent-crimson);
+}
+.tab-badge {
+  font-size: 12px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: var(--bg-subtle);
+  color: var(--ink-secondary);
+}
+
+/* 본문 컨테이너 */
+.app-container {
+  padding: 24px 28px 60px 28px;
+  max-width: 1720px;
+  margin: 0 auto;
+}
+
+/* KPI 대시보드 카드 5종 */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.kpi-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 18px 20px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 4px solid var(--accent-blue);
+  transition: transform 0.2s;
+}
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.kpi-card.gold { border-left-color: var(--accent-gold); }
+.kpi-card.crimson { border-left-color: var(--accent-crimson); }
+.kpi-card.emerald { border-left-color: var(--accent-emerald); }
+.kpi-card.navy { border-left-color: var(--bg-navy); }
+
+.kpi-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.kpi-val {
+  font-size: 23px;
+  font-weight: 800;
+  color: var(--ink-primary);
+  margin-top: 8px;
+}
+.kpi-sub {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+/* 툴바 */
+.grid-toolbar {
+  background: #FFFFFF;
+  border: 1px solid var(--border-light);
+  border-radius: 10px 10px 0 0;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 2px solid var(--border-light);
+}
+.tool-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.btn {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  background: #FFFFFF;
+  color: var(--ink-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn:hover {
+  background: #F1F5F9;
+  border-color: var(--ink-secondary);
+}
+.btn-primary {
+  background: var(--accent-blue);
+  color: #FFF;
+  border-color: var(--accent-blue);
+}
+.btn-primary:hover {
+  background: #15468D;
+  border-color: #15468D;
+}
+.btn-crimson {
+  background: var(--accent-crimson);
+  color: #FFF;
+  border-color: var(--accent-crimson);
+}
+.btn-crimson:hover {
+  background: #80131B;
+}
+.btn-gold {
+  background: var(--accent-gold);
+  color: #FFF;
+  border-color: var(--accent-gold);
+}
+.btn-gold:hover {
+  background: #96630D;
+}
+.btn-sm {
+  font-size: 12.5px;
+  padding: 5px 10px;
+}
+
+/* 엑셀 스프레드시트 테이블 래퍼 */
+.excel-table-container {
+  background: #FFFFFF;
+  border: 1px solid var(--border-light);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+  max-height: 720px;
+  position: relative;
+}
+.excel-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+  min-width: 1350px;
+}
+.excel-table th {
+  background: #F1F4F9;
+  color: #2D3748;
+  font-weight: 700;
+  padding: 11px 10px;
+  text-align: center;
+  border: 1px solid var(--grid-line);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  white-space: nowrap;
+}
+.excel-table td {
+  border: 1px solid var(--grid-line);
+  padding: 6px 8px;
+  color: var(--ink-primary);
+  background: #FFFFFF;
+}
+.excel-table tr:hover td {
+  background-color: #F8FAFD;
+}
+.excel-table tr.deficit td {
+  background-color: #FFF5F5;
+}
+
+/* 셀 내부 인풋 스타일 */
+.cell-input {
+  width: 100%;
+  border: 1px solid transparent;
+  padding: 5px 6px;
+  font-size: 14.5px;
+  font-family: inherit;
+  background: transparent;
+  color: inherit;
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.15s;
+}
+.cell-input:focus {
+  background: #FFFFFF;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px rgba(27, 89, 179, 0.2);
+}
+.cell-input.num-input {
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+}
+.cell-center { text-align: center; }
+.cell-right { text-align: right; font-family: 'JetBrains Mono', monospace; }
+
+/* 지방회 합계 행 */
+.total-row td {
+  background: #FAF3E3 !important;
+  font-weight: 800;
+  color: #633C00;
+  border-top: 2px solid #D69E2E;
+  border-bottom: 2px solid #D69E2E;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+}
+
+/* 적자 경고 태그 */
+.badge-deficit {
+  color: #C53030;
+  font-weight: 800;
+  background: #FED7D7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  margin-left: 4px;
+}
+
+/* 모달 (재정 상세입력) */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.modal-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-box {
+  background: #FFFFFF;
+  border-radius: 14px;
+  width: 95%;
+  max-width: 1080px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+.modal-hdr {
+  background: linear-gradient(135deg, #111E32 0%, #1A2F50 100%);
+  color: #FFF;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3px solid #C89B3C;
+}
+.modal-hdr h3 {
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.modal-close {
+  background: transparent;
+  border: none;
+  color: #FFF;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.modal-close:hover {
+  background: rgba(255,255,255,0.15);
+}
+.modal-body {
+  padding: 22px 26px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-ftr {
+  background: #F8FAFC;
+  padding: 14px 24px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 모달 내부 2열 재정 서식 */
+.fin-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.fin-col-card {
+  border: 1.5px solid var(--border-light);
+  border-radius: 10px;
+  background: #FFF;
+  overflow: hidden;
+}
+.fin-col-hdr {
+  padding: 10px 14px;
+  font-weight: 800;
+  font-size: 15px;
+  background: #F1F5F9;
+  border-bottom: 1.5px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.fin-col-hdr.in { border-top: 3px solid var(--accent-blue); color: var(--accent-blue); }
+.fin-col-hdr.out { border-top: 3px solid var(--accent-crimson); color: var(--accent-crimson); }
+
+.fin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.fin-table th, .fin-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--grid-line);
+  font-size: 14px;
+}
+.fin-table th {
+  background: #FAFBFC;
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink-secondary);
+  width: 45%;
+}
+.fin-subtot-row td {
+  background: #F8FAFC;
+  font-weight: 800;
+  color: var(--ink-primary);
+  border-top: 2px solid var(--border-light);
+}
+
+/* 서울연회 관리자 모드 스타일 */
+.conf-view-wrap {
+  display: none;
+}
+.conf-dist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.dist-card {
+  background: #FFFFFF;
+  border: 1.5px solid var(--border-light);
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+.dist-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-blue);
+}
+.dist-card-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dist-name {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--ink-primary);
+}
+.dist-badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 99px;
+}
+.dist-badge.done {
+  background: #DEF7EC;
+  color: #03543F;
+  border: 1px solid #BCF0DA;
+}
+.dist-badge.pending {
+  background: #EDF2F7;
+  color: #718096;
+}
+.dist-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 13.5px;
+  background: #FAFBFD;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+}
+.dist-metric-val {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+/* 공식 양식 2-1 및 2-2 뷰 (A4 인쇄 스타일 포함) */
+.official-form-view {
+  display: none;
+  background: #FFFFFF;
+  padding: 36px 40px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  margin-top: 16px;
+}
+.form-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  color: #111E32;
+}
+.form-sub-info {
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--ink-secondary);
+  margin-bottom: 24px;
+}
+.kmc-grid-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #2D3748;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+}
+.kmc-grid-table th, .kmc-grid-table td {
+  border: 1px solid #718096;
+  padding: 6px 8px;
+}
+.kmc-grid-table th {
+  background: #EDF2F7;
+  font-weight: 700;
+  text-align: center;
+}
+.kmc-grid-table .subhdr {
+  background: #E2E8F0;
+  font-weight: 700;
+}
+
+@media print {
+  .master-header, .meta-ctrl-bar, .main-tabs-wrap, .grid-toolbar, .kpi-grid, .btn {
+    display: none !important;
+  }
+  body, .app-container, .official-form-view {
+    background: #FFF !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .official-form-view {
+    display: block !important;
+  }
+  .page-break {
+    page-break-after: always;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단 마스터 헤더 -->
+<header class="master-header">
+  <div class="brand-wrap">
+    <div class="kmc-cross">✝</div>
+    <div class="brand-title">
+      <h1>기독교대한감리회 통계서기 스튜디오 <span class="brand-badge">v2.0 엑셀통합형</span></h1>
+      <div class="brand-desc">지방회 개체교회 엑셀 그리드 입력 · 실시간 집계 · 서울연회 통합 취합 시스템</div>
+    </div>
+  </div>
+
+  <!-- 모드 스위처 (지방회 통계서기 모드 vs 서울연회 관리자 모드) -->
+  <div class="mode-switch-box">
+    <button class="mode-btn active" id="btnModeDistrict" onclick="switchMode('district')">
+      <span>📊 지방회 통계서기 모드</span>
+    </button>
+    <button class="mode-btn" id="btnModeConference" onclick="switchMode('conference')">
+      <span>🏛️ 서울연회 관리자 모드</span>
+    </button>
+  </div>
+
+  <!-- 우측 상태 및 내보내기 -->
+  <div class="header-actions">
+    <div class="save-status-badge">
+      <div class="save-dot"></div>
+      <span id="saveStatusText">실시간 자동저장됨</span>
+    </div>
+    <button class="btn btn-sm" style="background:rgba(255,255,255,0.15); color:#FFF; border-color:rgba(255,255,255,0.3);" onclick="copyWebLink()">
+      <span>🔗 주소 복사</span>
+    </button>
+    <button class="btn btn-gold btn-sm" onclick="exportDistrictJson()">
+      <span>💾 연회 제출용 저장 (.kmc)</span>
+    </button>
+  </div>
+</header>
+
+<!-- 메타 컨트롤 바 -->
+<div class="meta-ctrl-bar">
+  <div class="meta-inputs-group">
+    <div class="meta-item">
+      <label>연도:</label>
+      <input type="number" id="metaYear" value="2024" style="width: 85px;" onchange="updateMeta()">
+    </div>
+    <div class="meta-item">
+      <label>연회:</label>
+      <input type="text" id="metaConference" value="서울연회" style="width: 100px;" readonly>
+    </div>
+    <div class="meta-item">
+      <label>지방회:</label>
+      <select id="metaDistrict" onchange="updateMeta()">
+        <option value="마포지방회" selected>마포지방회</option>
+        <option value="종로지방회">종로지방회</option>
+        <option value="중구용산지방회">중구용산지방회</option>
+        <option value="동대문지방회">동대문지방회</option>
+        <option value="중랑지방회">중랑지방회</option>
+        <option value="성동광진지방회">성동광진지방회</option>
+        <option value="성북지방회">성북지방회</option>
+        <option value="도봉지방회">도봉지방회</option>
+        <option value="강북지방회">강북지방회</option>
+        <option value="노원지방회">노원지방회</option>
+        <option value="서대문지방회">서대문지방회</option>
+        <option value="은평지방회">은평지방회</option>
+        <option value="은평동지방회">은평동지방회</option>
+      </select>
+    </div>
+    <div class="meta-item">
+      <label>통계서기:</label>
+      <input type="text" id="metaSecretary" value="한범수" style="width: 95px;" onchange="updateMeta()">
+    </div>
+    <div class="meta-item">
+      <label>감리사:</label>
+      <input type="text" id="metaSuperintendent" value="이인선" style="width: 95px;" onchange="updateMeta()">
+    </div>
+  </div>
+
+  <div class="tool-group">
+    <button class="btn btn-sm" onclick="exportToExcel()">
+      <span>📥 엑셀 다운로드 (.xlsx)</span>
+    </button>
+    <button class="btn btn-sm" onclick="window.print()">
+      <span>🖨️ A4 보고서 인쇄</span>
+    </button>
+  </div>
+</div>
+
+<!-- 지방회 모드 탭 네비게이션 -->
+<nav class="main-tabs-wrap" id="districtTabs">
+  <button class="tab-btn active" id="tabBtnGrid" onclick="switchDistrictTab('grid')">
+    <span>📊 1. 교회별 엑셀 입력표</span>
+    <span class="tab-badge" id="badgeChurchCnt">36</span>
+  </button>
+  <button class="tab-btn" id="tabBtnForm21" onclick="switchDistrictTab('form21')">
+    <span>🏛️ 2. 지방 통계집계표 (양식 2-1)</span>
+  </button>
+  <button class="tab-btn" id="tabBtnForm22" onclick="switchDistrictTab('form22')">
+    <span>📋 3. 제출 교회목록표 (양식 2-2)</span>
+  </button>
+</nav>
+
+<!-- 메인 앱 컨테이너 -->
+<main class="app-container">
+
+  <!-- ===================================================================== -->
+  <!-- 1. 지방회 통계서기 모드 컨텐츠 -->
+  <!-- ===================================================================== -->
+  <div id="districtView">
+
+    <!-- KPI 요약 카드 5종 -->
+    <section class="kpi-grid">
+      <div class="kpi-card navy">
+        <div class="kpi-label">등록 교회 수 <span>🏛️</span></div>
+        <div class="kpi-val"><span id="kpiChurchCnt" class="num">0</span> <small style="font-size:15px">개</small></div>
+        <div class="kpi-sub" id="kpiDistTitle">서울연회 마포지방회</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">총 입교인 수 <span>👥</span></div>
+        <div class="kpi-val"><span id="kpiFullMember" class="num">0</span> <small style="font-size:15px">명</small></div>
+        <div class="kpi-sub">전체 교인: <span id="kpiTotalMember" class="mono">0</span>명</div>
+      </div>
+      <div class="kpi-card gold">
+        <div class="kpi-label">경상비 결산 총액 (수입소계) <span>💰</span></div>
+        <div class="kpi-val"><span id="kpiGeneralIn" class="num">0</span> <small style="font-size:15px">원</small></div>
+        <div class="kpi-sub">지방 경상비 결산 기준</div>
+      </div>
+      <div class="kpi-card crimson">
+        <div class="kpi-label">일반회계 지출 총액 <span>📉</span></div>
+        <div class="kpi-val"><span id="kpiGeneralOut" class="num">0</span> <small style="font-size:15px">원</small></div>
+        <div class="kpi-sub">집행률: <span id="kpiExecRate" class="mono">0%</span></div>
+      </div>
+      <div class="kpi-card emerald">
+        <div class="kpi-label">특별회계 수입 총액 <span>🧱</span></div>
+        <div class="kpi-val"><span id="kpiSpecialIn" class="num">0</span> <small style="font-size:15px">원</small></div>
+        <div class="kpi-sub">지출: <span id="kpiSpecialOut" class="mono">0</span>원</div>
+      </div>
+    </section>
+
+    <!-- [탭 1: 교회별 엑셀 입력표] -->
+    <div id="tabContentGrid">
+      <!-- 툴바 -->
+      <div class="grid-toolbar">
+        <div class="tool-group">
+          <button class="btn btn-primary" onclick="addChurchRow()">
+            <span>➕ 교회 1개 행 추가</span>
+          </button>
+          <button class="btn" onclick="addMultipleRows(5)">
+            <span>➕ 5개 추가</span>
+          </button>
+          <button class="btn" onclick="removeEmptyRows()">
+            <span>🧹 빈 행 정리</span>
+          </button>
+          <button class="btn" onclick="document.getElementById('excelFileInput').click()">
+            <span>📂 엑셀 파일 가져오기</span>
+          </button>
+          <input type="file" id="excelFileInput" accept=".xlsx, .xls" style="display:none" onchange="importExcelFile(this.files)">
+        </div>
+
+        <div class="tool-group">
+          <button class="btn btn-gold" onclick="loadSample2024()">
+            <span>🔄 2024 마포 실측 36개 교회 예시 채우기</span>
+          </button>
+          <button class="btn btn-crimson" onclick="clearAllChurches()">
+            <span>🗑️ 전체 비우기 (새 지방회)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 엑셀 테이블 -->
+      <div class="excel-table-container">
+        <table class="excel-table" id="churchExcelTable">
+          <thead>
+            <tr>
+              <th style="width: 48px;">No</th>
+              <th style="width: 130px;">교회명</th>
+              <th style="width: 100px;">담임자</th>
+              <th style="width: 85px;">입교인(명)</th>
+              <th style="width: 85px;">전체교인</th>
+              <th style="width: 165px; background:#EEF4FC; color:#1B3B6F;">경상비 결산 (수입소계)</th>
+              <th style="width: 155px;">일반지출 소계</th>
+              <th style="width: 140px;">차기이월금(잔고)</th>
+              <th style="width: 145px;">특별수입 소계</th>
+              <th style="width: 145px;">특별지출 소계</th>
+              <th style="width: 110px; background:#FEF8EC; color:#B47814;">경상비 비중(%)</th>
+              <th style="width: 95px;">재정 상세</th>
+              <th style="width: 55px;">삭제</th>
+            </tr>
+          </thead>
+          <tbody id="churchTableBody">
+            <!-- 자바스크립트로 렌더링 -->
+          </tbody>
+          <tfoot>
+            <tr class="total-row" id="churchTableFooter">
+              <!-- 자바스크립트로 합계행 렌더링 -->
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p style="margin-top:10px; font-size:13px; color:var(--ink-muted);">
+        💡 <strong>팁:</strong> 테이블의 숫자 칸을 클릭하여 직접 수정하면 즉시 전체 합계와 공식 집계표가 실시간으로 다시 계산됩니다. [상세입력 🔍]을 누르면 13개 일반회계 세부과목과 5개 특별회계 세부과목을 입력할 수 있습니다.
+      </p>
+    </div>
+
+    <!-- [탭 2: 지방 통계집계표 (공식 양식 2-1)] -->
+    <div id="tabContentForm21" class="official-form-view">
+      <div class="form-title" id="form21Title">2024년도 기독교대한감리회 서울연회 마포지방회 통계집계표 (양식 2-1)</div>
+      <div class="form-sub-info" id="form21SubInfo">집계 교회수: 36개 교회 | 감리사: 이인선 | 통계서기: 한범수</div>
+
+      <!-- 제7번 재정수지현황 정규 서식 표 -->
+      <table class="kmc-grid-table">
+        <thead>
+          <tr>
+            <th colspan="5" class="subhdr">[7. 재정수지현황 — ① 일반회계 1~13번 과목]</th>
+          </tr>
+          <tr>
+            <th style="width:25%">수입 과목 (공식 표준)</th>
+            <th style="width:25%">수입 금액 (원)</th>
+            <th style="width:25%">지출 과목 (공식 표준)</th>
+            <th style="width:25%">지출 금액 (원)</th>
+          </tr>
+        </thead>
+        <tbody id="form21FinanceBody">
+          <!-- 13개 일반 슬롯 자바스크립트 렌더링 -->
+        </tbody>
+      </table>
+
+      <!-- 특별회계 5개 슬롯 (클간사 지적 100% 반영 교정!) -->
+      <table class="kmc-grid-table">
+        <thead>
+          <tr>
+            <th colspan="5" class="subhdr">[7. 재정수지현황 — ② 특별회계 1~5번 과목 (교리와 장정 정규 서식)]</th>
+          </tr>
+          <tr>
+            <th style="width:25%">특별수입 과목 (표준)</th>
+            <th style="width:25%">특별수입 금액 (원)</th>
+            <th style="width:25%">특별지출 과목 (표준)</th>
+            <th style="width:25%">특별지출 금액 (원)</th>
+          </tr>
+        </thead>
+        <tbody id="form21SpecialBody">
+          <!-- 5개 특별 슬롯 자바스크립트 렌더링 -->
+        </tbody>
+      </table>
+
+      <!-- 재정 총계(순계) -->
+      <table class="kmc-grid-table">
+        <tbody id="form21GrandBody">
+          <!-- 총계 렌더링 -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- [탭 3: 제출 교회목록표 (공식 양식 2-2)] -->
+    <div id="tabContentForm22" class="official-form-view">
+      <div class="form-title" id="form22Title">2024년도 마포지방회 통계표 제출 교회목록표 및 현황 (양식 2-2)</div>
+      <div class="form-sub-info" id="form22SubInfo">총 36개 교회 제출 완료</div>
+
+      <table class="kmc-grid-table" id="form22Table">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>교회명</th>
+            <th>담임자</th>
+            <th>입교인</th>
+            <th>전체교인</th>
+            <th>경상비결산(일반수입소계)</th>
+            <th>경상비 비중(%)</th>
+            <th>일반지출소계</th>
+            <th>특별수입소계</th>
+            <th>특별지출소계</th>
+            <th>차기이월금</th>
+          </tr>
+        </thead>
+        <tbody id="form22Body">
+          <!-- 자바스크립트로 목록표 렌더링 -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 2. 서울연회 관리자 모드 컨텐츠 (13개 지방회 통합) -->
+  <!-- ===================================================================== -->
+  <div id="conferenceView" class="conf-view-wrap">
+    <div style="background:#FFFFFF; border-radius:12px; padding:20px 24px; border:1px solid var(--border-light); margin-bottom:24px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h2 style="font-size:20px; font-weight:800; color:var(--bg-navy);">🏛️ 서울연회 13개 지방회 통계 취합 현황</h2>
+        <p style="font-size:13.5px; color:var(--ink-secondary); margin-top:4px;">
+          각 지방회 통계서기가 제출한 <code>.kmc</code> 파일을 드래그해 넣거나, 마포지방회 등 실시간 입력본을 연회 전체로 즉시 자동 취합합니다.
+        </p>
+      </div>
+      <button class="btn btn-primary" onclick="exportConferenceExcel()">
+        <span>📥 서울연회 통합 통계 엑셀 다운로드 (.xlsx)</span>
+      </button>
+    </div>
+
+    <!-- 13개 지방회 카드 그리드 -->
+    <div class="conf-dist-grid" id="confDistCardGrid">
+      <!-- 13개 카드 자바스크립트 렌더링 -->
+    </div>
+
+    <!-- 서울연회 지방회별 총괄 스프레드시트 -->
+    <div style="background:#FFFFFF; border:1px solid var(--border-light); border-radius:12px; padding:24px; box-shadow:var(--shadow-sm);">
+      <h3 style="font-size:17px; font-weight:800; margin-bottom:14px; color:var(--ink-primary);">
+        📊 서울연회 지방회별 총괄 집계표 (13개 지방회)
+      </h3>
+      <div style="overflow-x:auto;">
+        <table class="kmc-grid-table" style="margin-bottom:0;" id="confSummaryTable">
+          <thead>
+            <tr>
+              <th style="width:40px;">No</th>
+              <th style="width:130px;">지방회명</th>
+              <th style="width:90px;">제출상태</th>
+              <th style="width:85px;">교회수</th>
+              <th style="width:95px;">입교인(명)</th>
+              <th style="width:95px;">전체교인</th>
+              <th style="width:170px;">경상비 결산 (원)</th>
+              <th style="width:160px;">일반지출 소계</th>
+              <th style="width:150px;">특별회계 수입</th>
+              <th style="width:170px;">재정 총계 (순계)</th>
+              <th style="width:110px;">연회 비중(%)</th>
+            </tr>
+          </thead>
+          <tbody id="confSummaryTableBody">
+            <!-- 자바스크립트 렌더링 -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- 재정 상세입력 모달 -->
+<div class="modal-backdrop" id="finDetailModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3><span>🔍</span> <span id="modalChurchTitle">서강교회 재정 상세 입력</span></h3>
+      <button class="modal-close" onclick="closeFinModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="fin-split-grid">
+        <!-- 좌측: 일반회계 (13수입 / 13지출) -->
+        <div class="fin-col-card">
+          <div class="fin-col-hdr in">
+            <span>① 일반회계 수입 (13개 과목)</span>
+            <span class="mono" id="modalGenInSub">0원</span>
+          </div>
+          <table class="fin-table" id="modalGenInTable">
+            <!-- 13과목 인풋 -->
+          </table>
+
+          <div class="fin-col-hdr out" style="margin-top:14px;">
+            <span>① 일반회계 지출 (13개 과목)</span>
+            <span class="mono" id="modalGenOutSub">0원</span>
+          </div>
+          <table class="fin-table" id="modalGenOutTable">
+            <!-- 13과목 인풋 -->
+          </table>
+        </div>
+
+        <!-- 우측: 특별회계 (5수입 / 5지출) 및 교세 -->
+        <div class="fin-col-card">
+          <div class="fin-col-hdr in">
+            <span>② 특별회계 수입 (5개 과목 - 장정 표준)</span>
+            <span class="mono" id="modalSpecInSub">0원</span>
+          </div>
+          <table class="fin-table" id="modalSpecInTable">
+            <!-- 5과목 인풋 -->
+          </table>
+
+          <div class="fin-col-hdr out" style="margin-top:14px;">
+            <span>② 특별회계 지출 (5개 과목 - 장정 표준)</span>
+            <span class="mono" id="modalSpecOutSub">0원</span>
+          </div>
+          <table class="fin-table" id="modalSpecOutTable">
+            <!-- 5과목 인풋 -->
+          </table>
+
+          <div style="padding:14px; background:#F8FAFD; border-top:1.5px solid var(--border-light); margin-top:14px;">
+            <div style="font-weight:700; font-size:14px; margin-bottom:8px; color:var(--ink-secondary);">👥 기본 교세 정보</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div>
+                <label style="font-size:12px; color:var(--ink-muted);">입교인 (세례입교인)</label>
+                <input type="number" id="modalInputFullMember" class="cell-input num-input" style="border:1px solid #CBD5E1; background:#FFF;" onchange="syncModalMembers()">
+              </div>
+              <div>
+                <label style="font-size:12px; color:var(--ink-muted);">전체 교인수</label>
+                <input type="number" id="modalInputTotalMember" class="cell-input num-input" style="border:1px solid #CBD5E1; background:#FFF;" onchange="syncModalMembers()">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <div style="font-size:13.5px; color:var(--ink-secondary);">
+        * 일반수입소계: <strong id="modalSummaryIn" style="color:var(--accent-blue);">0</strong>원 /
+        일반지출소계: <strong id="modalSummaryOut" style="color:var(--accent-crimson);">0</strong>원
+      </div>
+      <div class="tool-group">
+        <button class="btn" onclick="closeFinModal()">취소</button>
+        <button class="btn btn-primary" onclick="saveFinModal()">적용 및 저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// 표준 과목 정의 (클간사 검수 100% 반영 교정!)
+// ============================================================================
+const STD_GEN_IN_LABELS = [
+  "주일헌금", "십일조헌금", "감사헌금", "교회학교헌금", "속회헌금",
+  "부활절헌금", "맥추감사헌금", "추수감사헌금", "성탄절헌금", "기타헌금",
+  "잡수입", "추가수입1", "추가수입2"
+];
+const STD_GEN_OUT_LABELS = [
+  "부담금", "선교사업비", "기독교교육비", "사회봉사비", "예배·문화비",
+  "관리유지비", "사무행정비", "성역비", "인건비", "잡지출",
+  "예비비", "적립금", "전환금"
+];
+// 특별회계 5개 슬롯 (새오름 실측 원본 교리와 장정 정규 서식 1:1 완벽 일치!)
+const STD_SPEC_IN_LABELS = ["건축헌금", "목적헌금", "차입금", "전입금", "기타"];
+const STD_SPEC_OUT_LABELS = ["건축비", "토지구입비", "목적사업비", "차입금상환", "기타"];
+
+// 서울연회 13개 지방회 공식 명칭
+const SEOUL_DISTRICTS = [
+  "종로지방회", "중구용산지방회", "동대문지방회", "중랑지방회", "성동광진지방회",
+  "성북지방회", "도봉지방회", "강북지방회", "노원지방회", "서대문지방회",
+  "마포지방회", "은평지방회", "은평동지방회"
+];
+
+// 2024 마포 36개 교회 실측 예시 데이터
+const EMBEDDED_SAMPLE_36 = [
+  {
+    "no": 1,
+    "name": "서강",
+    "sector": "서강",
+    "pastor": "임태일",
+    "founded": "1902.05.25",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 399,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        28996530,
+        347872678,
+        100799000,
+        3412000,
+        17032000,
+        15508000,
+        13321000,
+        25886000,
+        11385000,
+        20000596,
+        26375,
+        0,
+        0
+      ],
+      "general_in_carry": 3135690,
+      "general_in_sub": 584239179,
+      "general_out": [
+        30333000,
+        53783006,
+        73505996,
+        29457070,
+        58597190,
+        117062592,
+        70199465,
+        100800000,
+        64200000,
+        0,
+        2200000,
+        0,
+        0
+      ],
+      "general_out_balance": -12763450,
+      "general_out_sub": 600138319,
+      "special_in": [
+        0,
+        140742478,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 140742478,
+      "special_out": [
+        0,
+        0,
+        127727420,
+        0,
+        0
+      ],
+      "special_out_balance": 13015058,
+      "special_out_sub": 127727420
+    }
+  },
+  {
+    "no": 2,
+    "name": "공덕",
+    "sector": "공덕",
+    "pastor": "최대광",
+    "founded": "1902.10.05",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 132,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        8259000,
+        81193000,
+        8194000,
+        162000,
+        1850000,
+        5852000,
+        3140000,
+        5270000,
+        5155000,
+        876900,
+        1050010,
+        0,
+        0
+      ],
+      "general_in_carry": 451318,
+      "general_in_sub": 121001910,
+      "general_out": [
+        6785500,
+        12157000,
+        5420000,
+        12800000,
+        7354000,
+        28175000,
+        1528000,
+        36000000,
+        8200000,
+        2819520,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 214208,
+      "general_out_sub": 121239020,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 0,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 0
+    }
+  },
+  {
+    "no": 3,
+    "name": "마포중앙",
+    "sector": "마포중앙",
+    "pastor": "김민영",
+    "founded": "1912.09.09",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 375,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        51317000,
+        327881500,
+        63647603,
+        2862310,
+        12084000,
+        11912000,
+        10865000,
+        27350000,
+        10170000,
+        64631130,
+        754447,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 583474990,
+      "general_out": [
+        25066000,
+        20468760,
+        29614033,
+        42907976,
+        47133990,
+        135147761,
+        26492165,
+        153057240,
+        69128000,
+        1982780,
+        3898460,
+        15000000,
+        0
+      ],
+      "general_out_balance": 13577825,
+      "general_out_sub": 569897165,
+      "special_in": [
+        2961000,
+        10000000,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 12961000,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_out_balance": 12961000,
+      "special_out_sub": 0
+    }
+  },
+  {
+    "no": 4,
+    "name": "서대문중앙",
+    "sector": "서대문중앙",
+    "pastor": "표순환",
+    "founded": "1950.01.01",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 182,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        17197000,
+        134721000,
+        39946000,
+        0,
+        2870000,
+        11995000,
+        10132000,
+        24055000,
+        10345000,
+        3731000,
+        4123926,
+        0,
+        0
+      ],
+      "general_in_carry": 1630052,
+      "general_in_sub": 259115926,
+      "general_out": [
+        13222000,
+        20319760,
+        3729016,
+        7086900,
+        13685000,
+        50972508,
+        44571670,
+        95400000,
+        10600000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 1159124,
+      "general_out_sub": 259586854,
+      "special_in": [
+        15000000,
+        13200000,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 7530056,
+      "special_in_sub": 28200000,
+      "special_out": [
+        0,
+        0,
+        26700000,
+        0,
+        0
+      ],
+      "special_out_balance": 9030056,
+      "special_out_sub": 26700000
+    }
+  },
+  {
+    "no": 5,
+    "name": "신성",
+    "sector": "신성",
+    "pastor": "박종래",
+    "founded": "1955.01.16",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 106,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        2378000,
+        27297000,
+        31787710,
+        182000,
+        400000,
+        661000,
+        670000,
+        1680000,
+        993000,
+        6600000,
+        3000159,
+        0,
+        0
+      ],
+      "general_in_carry": 4337790,
+      "general_in_sub": 75648869,
+      "general_out": [
+        2851000,
+        7718000,
+        3868000,
+        3154000,
+        2695490,
+        40939643,
+        1320000,
+        73800000,
+        1000000,
+        4500000,
+        2000000,
+        0,
+        0
+      ],
+      "general_out_balance": -63859474,
+      "general_out_sub": 143846133,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        245960000
+      ],
+      "special_in_carry": 84289235,
+      "special_in_sub": 245960000,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        321219474
+      ],
+      "special_out_balance": 9029761,
+      "special_out_sub": 321219474
+    }
+  },
+  {
+    "no": 6,
+    "name": "신촌",
+    "sector": "신촌",
+    "pastor": "임재웅",
+    "founded": "1955.05.15",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 464,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        36865200,
+        522378330,
+        92490000,
+        6501600,
+        40766000,
+        0,
+        0,
+        0,
+        0,
+        3950000,
+        1670000,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 704621130,
+      "general_out": [
+        48771000,
+        78079701,
+        52644346,
+        45077909,
+        23805930,
+        100649517,
+        67053071,
+        226112116,
+        0,
+        0,
+        0,
+        62427540,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 704621130,
+      "special_in": [
+        0,
+        74521000,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 74521000,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        74521000
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 74521000
+    }
+  },
+  {
+    "no": 7,
+    "name": "하늘가족",
+    "sector": "하늘가족",
+    "pastor": "방원철",
+    "founded": "1957.09.01",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 440,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        137185688,
+        783900000,
+        134661000,
+        0,
+        76908000,
+        29829000,
+        0,
+        65554000,
+        18521000,
+        12132000,
+        70300,
+        0,
+        0
+      ],
+      "general_in_carry": 22313334,
+      "general_in_sub": 1258760988,
+      "general_out": [
+        66062000,
+        150408121,
+        97644831,
+        52633078,
+        46458495,
+        251958687,
+        104550777,
+        302539101,
+        81694420,
+        52113398,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 75011414,
+      "general_out_sub": 1206062908,
+      "special_in": [
+        0,
+        296220305,
+        0,
+        0,
+        2754250
+      ],
+      "special_in_carry": 385398535,
+      "special_in_sub": 298974555,
+      "special_out": [
+        0,
+        0,
+        454048795,
+        0,
+        0
+      ],
+      "special_out_balance": 230324295,
+      "special_out_sub": 454048795
+    }
+  },
+  {
+    "no": 8,
+    "name": "서교",
+    "sector": "서교",
+    "pastor": "김종환",
+    "founded": "1966.07.24",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 314,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        48563000,
+        226157400,
+        58456000,
+        2986460,
+        32655000,
+        7550000,
+        7125000,
+        11118000,
+        7168000,
+        25087000,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 3598456,
+      "general_in_sub": 426865860,
+      "general_out": [
+        24565000,
+        74439000,
+        19100000,
+        41128180,
+        18860000,
+        92000000,
+        12487000,
+        93800000,
+        45300000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 8785136,
+      "general_out_sub": 421679180,
+      "special_in": [
+        0,
+        63883000,
+        0,
+        0,
+        7000000
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 70883000,
+      "special_out": [
+        0,
+        0,
+        62400000,
+        0,
+        0
+      ],
+      "special_out_balance": 8483000,
+      "special_out_sub": 62400000
+    }
+  },
+  {
+    "no": 9,
+    "name": "한서",
+    "sector": "한서",
+    "pastor": "최재선",
+    "founded": "1969.08.17",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 313,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        88325000,
+        319681554,
+        121816000,
+        2215500,
+        23185000,
+        12673000,
+        13385000,
+        36362000,
+        11721000,
+        43122000,
+        11910,
+        0,
+        0
+      ],
+      "general_in_carry": 10784294,
+      "general_in_sub": 672497964,
+      "general_out": [
+        30606000,
+        52538930,
+        26200000,
+        21169400,
+        75567770,
+        124804710,
+        29165890,
+        229002623,
+        45150000,
+        25390,
+        4390660,
+        34525000,
+        0
+      ],
+      "general_out_balance": 10135885,
+      "general_out_sub": 673146373,
+      "special_in": [
+        46030000,
+        87023000,
+        0,
+        0,
+        4400907
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 137453907,
+      "special_out": [
+        0,
+        0,
+        86966980,
+        0,
+        0
+      ],
+      "special_out_balance": 50486927,
+      "special_out_sub": 86966980
+    }
+  },
+  {
+    "no": 10,
+    "name": "은강",
+    "sector": "은강",
+    "pastor": "노명재",
+    "founded": "1970.07.19",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 398,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        51022000,
+        383051000,
+        87462000,
+        7155000,
+        18904000,
+        9268000,
+        7425000,
+        12780000,
+        7744000,
+        32710000,
+        117085,
+        0,
+        0
+      ],
+      "general_in_carry": 22998525,
+      "general_in_sub": 617638085,
+      "general_out": [
+        30649430,
+        45770470,
+        28641450,
+        47526560,
+        31633810,
+        96496930,
+        69921485,
+        143083670,
+        23691000,
+        2456120,
+        5817600,
+        0,
+        47330000
+      ],
+      "general_out_balance": 67618085,
+      "general_out_sub": 573018525,
+      "special_in": [
+        7260000,
+        62769878,
+        0,
+        47330000,
+        2490000
+      ],
+      "special_in_carry": 38212564,
+      "special_in_sub": 119849878,
+      "special_out": [
+        0,
+        0,
+        56142995,
+        0,
+        0
+      ],
+      "special_out_balance": 101919447,
+      "special_out_sub": 56142995
+    }
+  },
+  {
+    "no": 11,
+    "name": "가나안",
+    "sector": "가나안",
+    "pastor": "김병윤",
+    "founded": "1972.09.03",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 418,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        79366300,
+        340291490,
+        101428470,
+        3051950,
+        10681000,
+        14825000,
+        12137000,
+        17886530,
+        12120000,
+        175000,
+        21400,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 591984140,
+      "general_out": [
+        27013000,
+        36320520,
+        18214257,
+        14697724,
+        33492606,
+        155665617,
+        29665500,
+        164553400,
+        34200000,
+        0,
+        0,
+        54000000,
+        0
+      ],
+      "general_out_balance": 24161516,
+      "general_out_sub": 567822624,
+      "special_in": [
+        65182459,
+        79316000,
+        0,
+        0,
+        37335780
+      ],
+      "special_in_carry": 36021833,
+      "special_in_sub": 181834239,
+      "special_out": [
+        170025520,
+        0,
+        47257000,
+        0,
+        0
+      ],
+      "special_out_balance": 573552,
+      "special_out_sub": 217282520
+    }
+  },
+  {
+    "no": 12,
+    "name": "한강중앙",
+    "sector": "한강중앙",
+    "pastor": "유요한",
+    "founded": "1973.06.17",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 322,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        54866500,
+        347982935,
+        55418819,
+        0,
+        0,
+        10488000,
+        7132000,
+        12984000,
+        7380000,
+        7895000,
+        27798657,
+        0,
+        0
+      ],
+      "general_in_carry": 46695469,
+      "general_in_sub": 531945911,
+      "general_out": [
+        59541960,
+        34247400,
+        17870893,
+        4533120,
+        67097666,
+        35922556,
+        29245500,
+        190023840,
+        0,
+        119875230,
+        2000000,
+        0,
+        0
+      ],
+      "general_out_balance": 18283215,
+      "general_out_sub": 560358165,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        201464802
+      ],
+      "special_in_carry": 482913227,
+      "special_in_sub": 201464802,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        128360868
+      ],
+      "special_out_balance": 556017161,
+      "special_out_sub": 128360868
+    }
+  },
+  {
+    "no": 13,
+    "name": "참좋은",
+    "sector": "참좋은",
+    "pastor": "조규식",
+    "founded": "1976.11.14",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 42,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        9948000,
+        41357000,
+        14530000,
+        0,
+        4059000,
+        3142000,
+        3430000,
+        3480000,
+        3115000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 202000,
+      "general_in_sub": 83061000,
+      "general_out": [
+        4511000,
+        2827000,
+        1600000,
+        5956000,
+        1650000,
+        16242000,
+        1756000,
+        31500000,
+        1400000,
+        0,
+        0,
+        0,
+        15821000
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 83263000,
+      "special_in": [
+        3890000,
+        4876000,
+        0,
+        15821000,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 24587000,
+      "special_out": [
+        0,
+        0,
+        0,
+        24282000,
+        305000
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 24587000
+    }
+  },
+  {
+    "no": 14,
+    "name": "상암",
+    "sector": "상암",
+    "pastor": "황인수",
+    "founded": "1977.07.07",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 166,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        15888210,
+        75915000,
+        50586000,
+        0,
+        2928000,
+        7651000,
+        5000000,
+        7423000,
+        4221000,
+        300000,
+        107495,
+        0,
+        0
+      ],
+      "general_in_carry": 11763,
+      "general_in_sub": 170019705,
+      "general_out": [
+        10123000,
+        8940120,
+        1641300,
+        13052610,
+        6548310,
+        24442054,
+        1868940,
+        87800000,
+        15600000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 15134,
+      "general_out_sub": 170016334,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 0,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 0
+    }
+  },
+  {
+    "no": 15,
+    "name": "은빛",
+    "sector": "은빛",
+    "pastor": "신정숙",
+    "founded": "1975.12.05",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 15,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        2511000,
+        24631000,
+        9270000,
+        111000,
+        0,
+        971000,
+        737000,
+        1609000,
+        672000,
+        2040000,
+        5921,
+        0,
+        0
+      ],
+      "general_in_carry": 960436,
+      "general_in_sub": 42557921,
+      "general_out": [
+        2085000,
+        3305000,
+        780000,
+        46000,
+        546600,
+        1179130,
+        1672150,
+        26238240,
+        0,
+        500,
+        0,
+        6700000,
+        0
+      ],
+      "general_out_balance": 965737,
+      "general_out_sub": 42552620,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 0,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 0
+    }
+  },
+  {
+    "no": 16,
+    "name": "밝은빛",
+    "sector": "밝은빛",
+    "pastor": "-",
+    "founded": "1984.09.25",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 18,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        419000,
+        5656000,
+        6892350,
+        200000,
+        200000,
+        350000,
+        150000,
+        300000,
+        200000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 14367350,
+      "general_out": [
+        1065000,
+        320000,
+        466000,
+        200000,
+        295000,
+        16695608,
+        192000,
+        3400000,
+        750000,
+        143742,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": -9160000,
+      "general_out_sub": 23527350,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        9160000
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 9160000,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_out_balance": 9160000,
+      "special_out_sub": 0
+    }
+  },
+  {
+    "no": 17,
+    "name": "갈릴리",
+    "sector": "갈릴리",
+    "pastor": "고성범",
+    "founded": "1986.03.19",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 13,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        770000,
+        15690000,
+        2750000,
+        0,
+        0,
+        320000,
+        310000,
+        430000,
+        230000,
+        1000000,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 21500000,
+      "general_out": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        13300000,
+        0,
+        7200000,
+        0,
+        1000000,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 21500000,
+      "special_in": [
+        1000000,
+        300000,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 1300000,
+      "special_out": [
+        0,
+        0,
+        1300000,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 1300000
+    }
+  },
+  {
+    "no": 18,
+    "name": "나눔",
+    "sector": "나눔",
+    "pastor": "김명희",
+    "founded": "1986.08.06",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 16,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        1454000,
+        12261000,
+        1200000,
+        0,
+        0,
+        500000,
+        150000,
+        500000,
+        450000,
+        34992000,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 51507000,
+      "general_out": [
+        0,
+        5742000,
+        0,
+        3450000,
+        1950000,
+        21200000,
+        2887800,
+        10200000,
+        6000000,
+        77200,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 51507000,
+      "special_in": [
+        0,
+        754890205,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 754890205,
+      "special_out": [
+        0,
+        0,
+        754890205,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 754890205
+    }
+  },
+  {
+    "no": 19,
+    "name": "복음",
+    "sector": "복음",
+    "pastor": "박상수",
+    "founded": "1988.04.17",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 18,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        2411000,
+        14021000,
+        6175000,
+        0,
+        0,
+        410000,
+        400000,
+        520000,
+        630000,
+        0,
+        42000,
+        0,
+        0
+      ],
+      "general_in_carry": 372000,
+      "general_in_sub": 24609000,
+      "general_out": [
+        1177000,
+        88000,
+        0,
+        1280000,
+        328000,
+        8833000,
+        3077000,
+        10000000,
+        0,
+        155000,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 43000,
+      "general_out_sub": 24938000,
+      "special_in": [
+        0,
+        2910000,
+        0,
+        0,
+        1000000
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 3910000,
+      "special_out": [
+        0,
+        0,
+        2910000,
+        0,
+        1000000
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 3910000
+    }
+  },
+  {
+    "no": 20,
+    "name": "열림",
+    "sector": "열림",
+    "pastor": "이인선",
+    "founded": "1993.02.07",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 967,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        63838810,
+        852855470,
+        247858300,
+        11054600,
+        45742000,
+        28402000,
+        29480500,
+        45656000,
+        25792000,
+        147368000,
+        36719447,
+        0,
+        0
+      ],
+      "general_in_carry": 100000000,
+      "general_in_sub": 1534767127,
+      "general_out": [
+        76665000,
+        253750310,
+        121428420,
+        105547000,
+        110054720,
+        231564720,
+        120170162,
+        331350000,
+        0,
+        6500000,
+        33949400,
+        35000000,
+        0
+      ],
+      "general_out_balance": 208787395,
+      "general_out_sub": 1425979732,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        230574649
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 230574649,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_out_balance": 230574649,
+      "special_out_sub": 0
+    }
+  },
+  {
+    "no": 21,
+    "name": "동성",
+    "sector": "동성",
+    "pastor": "이흥준",
+    "founded": "1996.03.28",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 56,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        12948000,
+        50324200,
+        12726000,
+        998000,
+        2652000,
+        2140000,
+        2840000,
+        7801000,
+        1640000,
+        3754000,
+        3000000,
+        0,
+        0
+      ],
+      "general_in_carry": 1843800,
+      "general_in_sub": 100823200,
+      "general_out": [
+        6936000,
+        11310000,
+        6280900,
+        4040000,
+        5008000,
+        12308000,
+        3164309,
+        47000000,
+        2100000,
+        2026000,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 2493791,
+      "general_out_sub": 100173209,
+      "special_in": [
+        0,
+        10000000,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 10000000,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        10000000
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 10000000
+    }
+  },
+  {
+    "no": 22,
+    "name": "민들레",
+    "sector": "민들레",
+    "pastor": "배경락",
+    "founded": "1996.05.05",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 37,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        0,
+        36117000,
+        9185206,
+        385500,
+        0,
+        1010000,
+        0,
+        1150000,
+        875000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 48722706,
+      "general_out": [
+        1889000,
+        3350000,
+        1646200,
+        5200000,
+        4500000,
+        11500750,
+        2247000,
+        14400000,
+        2400000,
+        580000,
+        0,
+        1009756,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 48722706,
+      "special_in": [
+        7010000,
+        11409940,
+        0,
+        0,
+        2350000
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 20769940,
+      "special_out": [
+        0,
+        0,
+        18419940,
+        0,
+        2350000
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 20769940
+    }
+  },
+  {
+    "no": 23,
+    "name": "주님사랑",
+    "sector": "주님사랑",
+    "pastor": "안주영",
+    "founded": "1997.02.18",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 15,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        705200,
+        9135000,
+        0,
+        0,
+        0,
+        0,
+        0,
+        500000,
+        100000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 143140,
+      "general_in_sub": 10440200,
+      "general_out": [
+        475000,
+        600000,
+        200000,
+        0,
+        3000000,
+        3865560,
+        878071,
+        0,
+        150000,
+        94513,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 1320196,
+      "general_out_sub": 9263144,
+      "special_in": [
+        0,
+        15240000,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 15240000,
+      "special_out": [
+        0,
+        0,
+        15240000,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 15240000
+    }
+  },
+  {
+    "no": 24,
+    "name": "산마루",
+    "sector": "산마루",
+    "pastor": "이주연",
+    "founded": "2001.04.15",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 82,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        0,
+        121255220,
+        90942000,
+        0,
+        0,
+        7020000,
+        0,
+        21910000,
+        0,
+        13230000,
+        7306628,
+        1140000,
+        0
+      ],
+      "general_in_carry": -5377448,
+      "general_in_sub": 262803848,
+      "general_out": [
+        12720500,
+        42808753,
+        3451270,
+        0,
+        13532500,
+        29558827,
+        6533060,
+        76121560,
+        30517407,
+        24341630,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 17840893,
+      "general_out_sub": 239585507,
+      "special_in": [
+        0,
+        31500000,
+        0,
+        0,
+        3550000
+      ],
+      "special_in_carry": 92172705,
+      "special_in_sub": 35050000,
+      "special_out": [
+        0,
+        0,
+        29756580,
+        70000500,
+        17001000
+      ],
+      "special_out_balance": 10464625,
+      "special_out_sub": 116758080
+    }
+  },
+  {
+    "no": 25,
+    "name": "행복한",
+    "sector": "행복한",
+    "pastor": "전일경",
+    "founded": "2002.06.10",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 70,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        9141000,
+        66631000,
+        8124000,
+        700000,
+        1613000,
+        2130000,
+        2200000,
+        2520000,
+        1960000,
+        5200000,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 2001200,
+      "general_in_sub": 100219000,
+      "general_out": [
+        4528000,
+        1800000,
+        2200000,
+        6505000,
+        8737800,
+        36356000,
+        1472000,
+        32800000,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 7821400,
+      "general_out_sub": 94398800,
+      "special_in": [
+        5115000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 5400000,
+      "special_in_sub": 5115000,
+      "special_out": [
+        0,
+        0,
+        9665000,
+        0,
+        0
+      ],
+      "special_out_balance": 850000,
+      "special_out_sub": 9665000
+    }
+  },
+  {
+    "no": 26,
+    "name": "말레이시아한인",
+    "sector": "말레이시아한인",
+    "pastor": "장형식",
+    "founded": "1982.04.18",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 78,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        1400000,
+        30000000,
+        9000000,
+        100000,
+        0,
+        0,
+        1000000,
+        2000000,
+        1500000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 45000000,
+      "general_out": [
+        0,
+        4000000,
+        500000,
+        400000,
+        0,
+        3000000,
+        7000000,
+        24000000,
+        0,
+        6100000,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 45000000,
+      "special_in": [
+        0,
+        30000000,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 30000000,
+      "special_out": [
+        0,
+        0,
+        30000000,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 30000000
+    }
+  },
+  {
+    "no": 27,
+    "name": "벧엘",
+    "sector": "벧엘",
+    "pastor": "이명화",
+    "founded": "1999.01.24",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 15,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        3120000,
+        12927750,
+        4410000,
+        0,
+        370000,
+        430000,
+        388000,
+        520000,
+        510000,
+        650000,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 23325750,
+      "general_out": [
+        1086000,
+        2631150,
+        4200000,
+        1960100,
+        967000,
+        5508500,
+        373000,
+        200000,
+        6000000,
+        400000,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 23325750,
+      "special_in": [
+        1040000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 1040000,
+      "special_out": [
+        1040000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 1040000
+    }
+  },
+  {
+    "no": 28,
+    "name": "예닮",
+    "sector": "예닮",
+    "pastor": "-",
+    "founded": "2003.11.30",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 12,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        1180000,
+        6760000,
+        2050000,
+        0,
+        0,
+        200000,
+        0,
+        450000,
+        100000,
+        0,
+        11350,
+        0,
+        0
+      ],
+      "general_in_carry": 626150,
+      "general_in_sub": 10751350,
+      "general_out": [
+        716000,
+        235000,
+        100000,
+        0,
+        200000,
+        4740000,
+        430500,
+        4800000,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 156000,
+      "general_out_sub": 11221500,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        6000000
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 6000000,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        6000000
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 6000000
+    }
+  },
+  {
+    "no": 29,
+    "name": "꿈의",
+    "sector": "꿈의",
+    "pastor": "신동훈",
+    "founded": "2003.12.13",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 26,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        8188000,
+        25233000,
+        3300000,
+        0,
+        0,
+        1200000,
+        0,
+        1600000,
+        0,
+        300000,
+        178000,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 39999000,
+      "general_out": [
+        2789000,
+        3880900,
+        1220000,
+        1470000,
+        3100000,
+        4600000,
+        1020520,
+        20400000,
+        1000000,
+        371113,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 147467,
+      "general_out_sub": 39851533,
+      "special_in": [
+        12000000,
+        14400000,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 26400000,
+      "special_out": [
+        0,
+        0,
+        26400000,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 26400000
+    }
+  },
+  {
+    "no": 30,
+    "name": "마포은혜",
+    "sector": "마포은혜",
+    "pastor": "송신일",
+    "founded": "2006.08.27",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 16,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        2500000,
+        8000000,
+        6800000,
+        0,
+        0,
+        1000000,
+        600000,
+        2000000,
+        700000,
+        3500000,
+        2000000,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 27100000,
+      "general_out": [
+        1570000,
+        200000,
+        200000,
+        400000,
+        700000,
+        14000000,
+        100000,
+        9600000,
+        0,
+        110000,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 220000,
+      "general_out_sub": 26880000,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 0,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 0
+    }
+  },
+  {
+    "no": 31,
+    "name": "새오름",
+    "sector": "새오름",
+    "pastor": "한범수",
+    "founded": "2009.04.12",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 12,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        1020000,
+        8040000,
+        1400000,
+        0,
+        0,
+        300000,
+        0,
+        300000,
+        300000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 11360000,
+      "general_out": [
+        549000,
+        2000000,
+        500000,
+        500000,
+        2000000,
+        1200000,
+        500000,
+        0,
+        0,
+        4111000,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 11360000,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        20750400
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 20750400,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        20750400
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 20750400
+    }
+  },
+  {
+    "no": 32,
+    "name": "너와나의",
+    "sector": "너와나의",
+    "pastor": "유흥주",
+    "founded": "2011.04.24",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 53,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        2989000,
+        20229000,
+        3695000,
+        0,
+        0,
+        285000,
+        0,
+        520000,
+        770000,
+        0,
+        50332,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 28538332,
+      "general_out": [
+        1675500,
+        778600,
+        240500,
+        9044852,
+        0,
+        0,
+        1098880,
+        14200000,
+        1500000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 28538332,
+      "special_in": [
+        3150000,
+        38710000,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 97076231,
+      "special_in_sub": 41860000,
+      "special_out": [
+        41131410,
+        0,
+        0,
+        0,
+        4122338
+      ],
+      "special_out_balance": 93682483,
+      "special_out_sub": 45253748
+    }
+  },
+  {
+    "no": 33,
+    "name": "대화",
+    "sector": "대화",
+    "pastor": "이미경",
+    "founded": "2013.02.21",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 40,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        7905000,
+        31500000,
+        1530000,
+        0,
+        0,
+        1950000,
+        1300000,
+        1200000,
+        1520000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 46905000,
+      "general_out": [
+        2470500,
+        4000000,
+        2000000,
+        1880000,
+        2200000,
+        12600000,
+        3600000,
+        8400000,
+        5600000,
+        554500,
+        0,
+        3600000,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 46905000,
+      "special_in": [
+        56760000,
+        14000000,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 70760000,
+      "special_out": [
+        56760000,
+        0,
+        14000000,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 70760000
+    }
+  },
+  {
+    "no": 34,
+    "name": "평온",
+    "sector": "평온",
+    "pastor": "구본웅",
+    "founded": "2005.01.23",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 20,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        5086000,
+        28085000,
+        3860000,
+        0,
+        0,
+        720000,
+        0,
+        1440000,
+        970000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 2181000,
+      "general_in_sub": 40161000,
+      "general_out": [
+        2815000,
+        345000,
+        280000,
+        0,
+        340000,
+        12000000,
+        162000,
+        26400000,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 42342000,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 0,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 0
+    }
+  },
+  {
+    "no": 35,
+    "name": "싱가포르영광",
+    "sector": "싱가포르영광",
+    "pastor": "송신영",
+    "founded": "2021.03.29",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 125,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        12603218,
+        75954200,
+        12604000,
+        1234800,
+        2097920,
+        1504000,
+        1209600,
+        2272200,
+        1428000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 1000000,
+      "general_in_sub": 110907938,
+      "general_out": [
+        10022000,
+        9358000,
+        9806640,
+        2741760,
+        1879920,
+        15674120,
+        3284980,
+        17710300,
+        18317500,
+        9659660,
+        3453058,
+        0,
+        0
+      ],
+      "general_out_balance": 10000000,
+      "general_out_sub": 101907938,
+      "special_in": [
+        62335200,
+        44707120,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 16908560,
+      "special_in_sub": 107042320,
+      "special_out": [
+        0,
+        0,
+        57096400,
+        0,
+        44854480
+      ],
+      "special_out_balance": 22000000,
+      "special_out_sub": 101950880
+    }
+  },
+  {
+    "no": 36,
+    "name": "사이",
+    "sector": "사이",
+    "pastor": "이종건",
+    "founded": "2024.05.19",
+    "members": {
+      "wonip": 0,
+      "baptized": 0,
+      "full": 12,
+      "total": 0
+    },
+    "clergy_total": 1,
+    "finance": {
+      "general_in": [
+        940000,
+        9000000,
+        2000000,
+        0,
+        0,
+        0,
+        0,
+        300000,
+        520000,
+        0,
+        0,
+        0,
+        0
+      ],
+      "general_in_carry": 0,
+      "general_in_sub": 12760000,
+      "general_out": [
+        0,
+        820000,
+        0,
+        0,
+        530000,
+        7700000,
+        0,
+        0,
+        3150000,
+        560000,
+        0,
+        0,
+        0
+      ],
+      "general_out_balance": 0,
+      "general_out_sub": 12760000,
+      "special_in": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_in_carry": 0,
+      "special_in_sub": 0,
+      "special_out": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "special_out_balance": 0,
+      "special_out_sub": 0
+    }
+  }
+];
+
+// ============================================================================
+// 애플리케이션 상태 (State)
+// ============================================================================
+let AppState = {
+  mode: "district", // "district" or "conference"
+  meta: {
+    year: 2024,
+    conference: "서울연회",
+    district: "마포지방회",
+    secretary: "한범수",
+    superintendent: "이인선"
+  },
+  churches: [],
+  conferenceDistricts: {}
+};
+
+// 숫자 포맷 함수
+function fmt(n) {
+  if (n === null || n === undefined || isNaN(n)) return "0";
+  const v = Number(n);
+  return v.toLocaleString("ko-KR");
+}
+function num(v) {
+  if (typeof v === "number") return isNaN(v) ? 0 : v;
+  const s = String(v || "").replace(/,/g, "").trim();
+  const m = s.match(/[-+]?\d+(?:\.\d+)?/);
+  return m ? Number(m[0]) : 0;
+}
+
+// ============================================================================
+// 초기화 및 로컬스토리지 로드
+// ============================================================================
+window.addEventListener("DOMContentLoaded", () => {
+  loadFromLocalStorage();
+  if (AppState.churches.length === 0) {
+    if (EMBEDDED_SAMPLE_36 && EMBEDDED_SAMPLE_36.length > 0) {
+      AppState.churches = JSON.parse(JSON.stringify(EMBEDDED_SAMPLE_36));
+    } else {
+      createDefaultEmptyChurches(10);
+    }
+  }
+  initConferenceData();
+  renderAll();
+});
+
+function initConferenceData() {
+  for (const d of SEOUL_DISTRICTS) {
+    if (!AppState.conferenceDistricts[d]) {
+      if (d === "마포지방회") {
+        AppState.conferenceDistricts[d] = {
+          submitted: true,
+          churchCount: 36,
+          fullMembers: 5618,
+          totalMembers: 8421,
+          generalInSub: 9290001379,
+          generalOutSub: 9126935851,
+          specialInSub: 2927294373,
+          grandTotal: 12908336879
+        };
+      } else {
+        // 타 지방회 초기 상태 (미제출 또는 표준 추정치)
+        AppState.conferenceDistricts[d] = {
+          submitted: false,
+          churchCount: 28,
+          fullMembers: 4200,
+          totalMembers: 6500,
+          generalInSub: 7100000000,
+          generalOutSub: 6950000000,
+          specialInSub: 1800000000,
+          grandTotal: 8900000000
+        };
+      }
+    }
+  }
+}
+
+function saveToLocalStorage() {
+  try {
+    localStorage.setItem("kmc_stat_studio_v2", JSON.stringify(AppState));
+    const badge = document.getElementById("saveStatusText");
+    if (badge) {
+      badge.textContent = "실시간 자동저장됨";
+      badge.style.color = "#A7F3D0";
+    }
+  } catch (e) {
+    console.error("Local storage error:", e);
+  }
+}
+
+function loadFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem("kmc_stat_studio_v2");
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data && data.churches && Array.isArray(data.churches)) {
+        AppState = data;
+        document.getElementById("metaYear").value = AppState.meta.year || 2024;
+        document.getElementById("metaDistrict").value = AppState.meta.district || "마포지방회";
+        document.getElementById("metaSecretary").value = AppState.meta.secretary || "한범수";
+        document.getElementById("metaSuperintendent").value = AppState.meta.superintendent || "이인선";
+      }
+    }
+  } catch (e) {
+    console.warn("Could not load from localStorage:", e);
+  }
+}
+
+function updateMeta() {
+  AppState.meta.year = parseInt(document.getElementById("metaYear").value, 10) || 2024;
+  AppState.meta.district = document.getElementById("metaDistrict").value;
+  AppState.meta.secretary = document.getElementById("metaSecretary").value;
+  AppState.meta.superintendent = document.getElementById("metaSuperintendent").value;
+  document.getElementById("kpiDistTitle").textContent = `${AppState.meta.conference} ${AppState.meta.district}`;
+  saveToLocalStorage();
+  renderAll();
+}
+
+// ============================================================================
+// 렌더링 총괄 (Render All)
+// ============================================================================
+function renderAll() {
+  renderGridTable();
+  renderKPICards();
+  renderForm21();
+  renderForm22();
+  renderConferenceView();
+}
+
+// ============================================================================
+// 1. 엑셀 그리드 테이블 렌더링
+// ============================================================================
+function renderGridTable() {
+  const tbody = document.getElementById("churchTableBody");
+  tbody.innerHTML = "";
+
+  const totGenIn = AppState.churches.reduce((acc, c) => acc + (c.finance.general_in_sub || 0), 0);
+
+  AppState.churches.forEach((c, idx) => {
+    const tr = document.createElement("tr");
+    c.no = idx + 1;
+
+    const ratio = totGenIn > 0 ? ((c.finance.general_in_sub / totGenIn) * 100).toFixed(2) : "0.00";
+    const isDeficit = (c.finance.general_out_balance || 0) < 0;
+    if (isDeficit) tr.classList.add("deficit");
+
+    tr.innerHTML = `
+      <td class="cell-center" style="font-weight:700; color:var(--ink-muted);">${c.no}</td>
+      <td>
+        <input type="text" class="cell-input" style="font-weight:700;" value="${c.name || ''}" onchange="updateChurchField(${idx}, 'name', this.value)">
+      </td>
+      <td>
+        <input type="text" class="cell-input cell-center" value="${c.pastor || ''}" onchange="updateChurchField(${idx}, 'pastor', this.value)">
+      </td>
+      <td>
+        <input type="number" class="cell-input num-input" value="${c.members.full || 0}" onchange="updateChurchMember(${idx}, 'full', this.value)">
+      </td>
+      <td>
+        <input type="number" class="cell-input num-input" value="${c.members.total || 0}" onchange="updateChurchMember(${idx}, 'total', this.value)">
+      </td>
+      <td style="background:#F4F8FD;">
+        <input type="text" class="cell-input num-input" style="color:var(--accent-blue); font-weight:700;" value="${fmt(c.finance.general_in_sub)}" onblur="updateChurchFinanceSub(${idx}, 'general_in_sub', this.value)">
+      </td>
+      <td>
+        <input type="text" class="cell-input num-input" value="${fmt(c.finance.general_out_sub)}" onblur="updateChurchFinanceSub(${idx}, 'general_out_sub', this.value)">
+      </td>
+      <td>
+        <div style="display:flex; align-items:center; justify-content:flex-end;">
+          <input type="text" class="cell-input num-input" style="${isDeficit ? 'color:#C53030; font-weight:800;' : ''}" value="${fmt(c.finance.general_out_balance)}" onblur="updateChurchFinanceSub(${idx}, 'general_out_balance', this.value)">
+          ${isDeficit ? '<span class="badge-deficit">적자</span>' : ''}
+        </div>
+      </td>
+      <td>
+        <input type="text" class="cell-input num-input" value="${fmt(c.finance.special_in_sub)}" onblur="updateChurchFinanceSub(${idx}, 'special_in_sub', this.value)">
+      </td>
+      <td>
+        <input type="text" class="cell-input num-input" value="${fmt(c.finance.special_out_sub)}" onblur="updateChurchFinanceSub(${idx}, 'special_out_sub', this.value)">
+      </td>
+      <td class="cell-right" style="font-weight:700; color:var(--accent-gold);">${ratio}%</td>
+      <td class="cell-center">
+        <button class="btn btn-sm" onclick="openFinModal(${idx})">상세입력 🔍</button>
+      </td>
+      <td class="cell-center">
+        <button class="btn btn-sm" style="color:#C53030; padding:4px 6px;" onclick="deleteChurchRow(${idx})">❌</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // 합계행 계산
+  const totFull = AppState.churches.reduce((acc, c) => acc + (c.members.full || 0), 0);
+  const totTotal = AppState.churches.reduce((acc, c) => acc + (c.members.total || 0), 0);
+  const totGenOut = AppState.churches.reduce((acc, c) => acc + (c.finance.general_out_sub || 0), 0);
+  const totBal = AppState.churches.reduce((acc, c) => acc + (c.finance.general_out_balance || 0), 0);
+  const totSpecIn = AppState.churches.reduce((acc, c) => acc + (c.finance.special_in_sub || 0), 0);
+  const totSpecOut = AppState.churches.reduce((acc, c) => acc + (c.finance.special_out_sub || 0), 0);
+
+  const tfoot = document.getElementById("churchTableFooter");
+  tfoot.innerHTML = `
+    <td class="cell-center">합계</td>
+    <td class="cell-center">${AppState.churches.length}개 교회</td>
+    <td class="cell-center">-</td>
+    <td class="cell-right">${fmt(totFull)}</td>
+    <td class="cell-right">${fmt(totTotal)}</td>
+    <td class="cell-right" style="color:var(--accent-blue);">${fmt(totGenIn)}</td>
+    <td class="cell-right">${fmt(totGenOut)}</td>
+    <td class="cell-right">${fmt(totBal)}</td>
+    <td class="cell-right">${fmt(totSpecIn)}</td>
+    <td class="cell-right">${fmt(totSpecOut)}</td>
+    <td class="cell-right">100.00%</td>
+    <td colspan="2" class="cell-center">-</td>
+  `;
+
+  document.getElementById("badgeChurchCnt").textContent = AppState.churches.length;
+}
+
+// ============================================================================
+// 그리드 값 변경 핸들러
+// ============================================================================
+function updateChurchField(idx, field, val) {
+  if (AppState.churches[idx]) {
+    AppState.churches[idx][field] = val;
+    saveToLocalStorage();
+  }
+}
+function updateChurchMember(idx, field, val) {
+  if (AppState.churches[idx]) {
+    AppState.churches[idx].members[field] = parseInt(val, 10) || 0;
+    saveToLocalStorage();
+    renderKPICards();
+    renderForm21();
+    renderForm22();
+  }
+}
+function updateChurchFinanceSub(idx, field, valStr) {
+  if (AppState.churches[idx]) {
+    const v = num(valStr);
+    AppState.churches[idx].finance[field] = v;
+    saveToLocalStorage();
+    renderAll();
+  }
+}
+
+// ============================================================================
+// 행 추가 / 삭제 / 초기화
+// ============================================================================
+function addChurchRow() {
+  const newNo = AppState.churches.length + 1;
+  AppState.churches.push({
+    no: newNo,
+    name: `신규교회${newNo}`,
+    sector: `신규구역${newNo}`,
+    pastor: "",
+    founded: "",
+    members: { wonip: 0, baptized: 0, full: 0, total: 0 },
+    clergy_total: 1,
+    finance: {
+      general_in: [0,0,0,0,0,0,0,0,0,0,0,0,0],
+      general_in_carry: 0,
+      general_in_sub: 0,
+      general_out: [0,0,0,0,0,0,0,0,0,0,0,0,0],
+      general_out_balance: 0,
+      general_out_sub: 0,
+      special_in: [0,0,0,0,0],
+      special_in_carry: 0,
+      special_in_sub: 0,
+      special_out: [0,0,0,0,0],
+      special_out_balance: 0,
+      special_out_sub: 0
+    }
+  });
+  saveToLocalStorage();
+  renderAll();
+}
+
+function addMultipleRows(cnt) {
+  for (let i = 0; i < cnt; i++) addChurchRow();
+}
+
+function deleteChurchRow(idx) {
+  if (confirm(`'${AppState.churches[idx].name || '교회'}' 행을 삭제하시겠습니까?`)) {
+    AppState.churches.splice(idx, 1);
+    saveToLocalStorage();
+    renderAll();
+  }
+}
+
+function removeEmptyRows() {
+  AppState.churches = AppState.churches.filter(c => c.name && c.name.trim() !== "");
+  saveToLocalStorage();
+  renderAll();
+}
+
+function clearAllChurches() {
+  if (confirm("정말 모든 입력 데이터를 비우고 새 지방회 작성을 시작하시겠습니까?")) {
+    createDefaultEmptyChurches(10);
+    saveToLocalStorage();
+    renderAll();
+  }
+}
+
+function loadSample2024() {
+  if (confirm("2024년 마포지방회 36개 교회 실측 예시 데이터를 불러오시겠습니까?")) {
+    AppState.churches = JSON.parse(JSON.stringify(EMBEDDED_SAMPLE_36));
+    saveToLocalStorage();
+    renderAll();
+  }
+}
+
+function createDefaultEmptyChurches(count) {
+  AppState.churches = [];
+  for (let i = 1; i <= count; i++) {
+    AppState.churches.push({
+      no: i,
+      name: "",
+      pastor: "",
+      members: { full: 0, total: 0 },
+      finance: {
+        general_in: [0,0,0,0,0,0,0,0,0,0,0,0,0],
+        general_in_sub: 0,
+        general_out: [0,0,0,0,0,0,0,0,0,0,0,0,0],
+        general_out_balance: 0,
+        general_out_sub: 0,
+        special_in: [0,0,0,0,0],
+        special_in_sub: 0,
+        special_out: [0,0,0,0,0],
+        special_out_sub: 0
+      }
+    });
+  }
+}
+
+// ============================================================================
+// KPI 대시보드 렌더링
+// ============================================================================
+function renderKPICards() {
+  const cnt = AppState.churches.length;
+  const totFull = AppState.churches.reduce((a, c) => a + (c.members.full || 0), 0);
+  const totTotal = AppState.churches.reduce((a, c) => a + (c.members.total || 0), 0);
+  const genIn = AppState.churches.reduce((a, c) => a + (c.finance.general_in_sub || 0), 0);
+  const genOut = AppState.churches.reduce((a, c) => a + (c.finance.general_out_sub || 0), 0);
+  const specIn = AppState.churches.reduce((a, c) => a + (c.finance.special_in_sub || 0), 0);
+  const specOut = AppState.churches.reduce((a, c) => a + (c.finance.special_out_sub || 0), 0);
+
+  document.getElementById("kpiChurchCnt").textContent = cnt;
+  document.getElementById("kpiFullMember").textContent = fmt(totFull);
+  document.getElementById("kpiTotalMember").textContent = fmt(totTotal);
+  document.getElementById("kpiGeneralIn").textContent = fmt(genIn);
+  document.getElementById("kpiGeneralOut").textContent = fmt(genOut);
+  document.getElementById("kpiSpecialIn").textContent = fmt(specIn);
+  document.getElementById("kpiSpecialOut").textContent = fmt(specOut);
+
+  const rate = genIn > 0 ? ((genOut / genIn) * 100).toFixed(1) : "0";
+  document.getElementById("kpiExecRate").textContent = `${rate}%`;
+}
+
+// ============================================================================
+// 2. 공식 양식 2-1 (지방 통계집계표) 렌더링
+// ============================================================================
+function renderForm21() {
+  document.getElementById("form21Title").textContent = `${AppState.meta.year}년도 기독교대한감리회 ${AppState.meta.conference} ${AppState.meta.district} 통계집계표 (양식 2-1)`;
+  document.getElementById("form21SubInfo").textContent = `집계 교회수: ${AppState.churches.length}개 교회 | 감리사: ${AppState.meta.superintendent} | 통계서기: ${AppState.meta.secretary}`;
+
+  // 일반회계 13슬롯 합산
+  const genInSums = new Array(13).fill(0);
+  const genOutSums = new Array(13).fill(0);
+  let genInCarry = 0, genOutBal = 0;
+
+  AppState.churches.forEach(c => {
+    (c.finance.general_in || []).forEach((v, i) => { if (i < 13) genInSums[i] += (v || 0); });
+    (c.finance.general_out || []).forEach((v, i) => { if (i < 13) genOutSums[i] += (v || 0); });
+    genInCarry += (c.finance.general_in_carry || 0);
+    genOutBal += (c.finance.general_out_balance || 0);
+  });
+
+  const genInSub = AppState.churches.reduce((a, c) => a + (c.finance.general_in_sub || 0), 0);
+  const genOutSub = AppState.churches.reduce((a, c) => a + (c.finance.general_out_sub || 0), 0);
+  const genInTot = genInSub + genInCarry;
+  const genOutTot = genOutSub + genOutBal;
+
+  let fBody = "";
+  for (let i = 0; i < 13; i++) {
+    fBody += `
+      <tr>
+        <td>${i+1}. ${STD_GEN_IN_LABELS[i]}</td>
+        <td class="cell-right">${fmt(genInSums[i])}</td>
+        <td>${i+1}. ${STD_GEN_OUT_LABELS[i]}</td>
+        <td class="cell-right">${fmt(genOutSums[i])}</td>
+      </tr>
+    `;
+  }
+  fBody += `
+    <tr style="background:#FAF3E3; font-weight:700;">
+      <td>소 계 (경상비결산)</td>
+      <td class="cell-right" style="color:var(--accent-blue);">${fmt(genInSub)}</td>
+      <td>소 계</td>
+      <td class="cell-right">${fmt(genOutSub)}</td>
+    </tr>
+    <tr>
+      <td>전기이월금</td>
+      <td class="cell-right">${fmt(genInCarry)}</td>
+      <td>차기이월금 (잔고)</td>
+      <td class="cell-right">${fmt(genOutBal)}</td>
+    </tr>
+    <tr style="background:#F1F5F9; font-weight:800;">
+      <td>일반회계 합계</td>
+      <td class="cell-right">${fmt(genInTot)}</td>
+      <td>일반회계 합계</td>
+      <td class="cell-right">${fmt(genOutTot)}</td>
+    </tr>
+  `;
+  document.getElementById("form21FinanceBody").innerHTML = fBody;
+
+  // 특별회계 5슬롯 합산 (클간사 지적 100% 반영 교정!)
+  const specInSums = new Array(5).fill(0);
+  const specOutSums = new Array(5).fill(0);
+  let specInCarry = 0, specOutBal = 0;
+
+  AppState.churches.forEach(c => {
+    (c.finance.special_in || []).forEach((v, i) => { if (i < 5) specInSums[i] += (v || 0); });
+    (c.finance.special_out || []).forEach((v, i) => { if (i < 5) specOutSums[i] += (v || 0); });
+    specInCarry += (c.finance.special_in_carry || 0);
+    specOutBal += (c.finance.special_out_balance || 0);
+  });
+
+  const specInSub = AppState.churches.reduce((a, c) => a + (c.finance.special_in_sub || 0), 0);
+  const specOutSub = AppState.churches.reduce((a, c) => a + (c.finance.special_out_sub || 0), 0);
+  const specInTot = specInSub + specInCarry;
+  const specOutTot = specOutSub + specOutBal;
+
+  let sBody = "";
+  for (let i = 0; i < 5; i++) {
+    sBody += `
+      <tr>
+        <td>${i+1}. ${STD_SPEC_IN_LABELS[i]}</td>
+        <td class="cell-right">${fmt(specInSums[i])}</td>
+        <td>${i+1}. ${STD_SPEC_OUT_LABELS[i]}</td>
+        <td class="cell-right">${fmt(specOutSums[i])}</td>
+      </tr>
+    `;
+  }
+  sBody += `
+    <tr style="background:#FAF3E3; font-weight:700;">
+      <td>특별회계 소계</td>
+      <td class="cell-right">${fmt(specInSub)}</td>
+      <td>특별회계 소계</td>
+      <td class="cell-right">${fmt(specOutSub)}</td>
+    </tr>
+    <tr>
+      <td>전기이월금</td>
+      <td class="cell-right">${fmt(specInCarry)}</td>
+      <td>차기이월금 (잔고)</td>
+      <td class="cell-right">${fmt(specOutBal)}</td>
+    </tr>
+    <tr style="background:#F1F5F9; font-weight:800;">
+      <td>특별회계 합계</td>
+      <td class="cell-right">${fmt(specInTot)}</td>
+      <td>특별회계 합계</td>
+      <td class="cell-right">${fmt(specOutTot)}</td>
+    </tr>
+  `;
+  document.getElementById("form21SpecialBody").innerHTML = sBody;
+
+  // 재정 총계(순계): 수입은 전입금(specInSums[3]) 제외, 지출은 전환금(genOutSums[12]) 제외
+  const grandIn = genInTot + specInTot - specInSums[3];
+  const grandOut = genOutTot + specOutTot - genOutSums[12];
+
+  document.getElementById("form21GrandBody").innerHTML = `
+    <tr style="background:#111E32; color:#FFF; font-weight:800; font-size:15px;">
+      <td style="width:25%">재정 총계 (전입금 제외 순계)</td>
+      <td class="cell-right" style="width:25%; color:#F6D88B;">${fmt(grandIn)} 원</td>
+      <td style="width:25%">지출 총계 (전환금 제외 순계)</td>
+      <td class="cell-right" style="width:25%; color:#F6D88B;">${fmt(grandOut)} 원</td>
+    </tr>
+  `;
+}
+
+// ============================================================================
+// 3. 공식 양식 2-2 (제출 교회목록표) 렌더링
+// ============================================================================
+function renderForm22() {
+  document.getElementById("form22Title").textContent = `${AppState.meta.year}년도 ${AppState.meta.district} 통계표 제출 교회목록표 및 현황 (양식 2-2)`;
+  document.getElementById("form22SubInfo").textContent = `총 ${AppState.churches.length}개 교회 제출 완료 | 통계서기: ${AppState.meta.secretary}`;
+
+  const tbody = document.getElementById("form22Body");
+  tbody.innerHTML = "";
+
+  const totGenIn = AppState.churches.reduce((a, c) => a + (c.finance.general_in_sub || 0), 0);
+
+  AppState.churches.forEach((c, idx) => {
+    const ratio = totGenIn > 0 ? ((c.finance.general_in_sub / totGenIn) * 100).toFixed(2) : "0.00";
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="cell-center">${idx + 1}</td>
+      <td style="font-weight:700;">${c.name}</td>
+      <td class="cell-center">${c.pastor}</td>
+      <td class="cell-right">${fmt(c.members.full)}</td>
+      <td class="cell-right">${fmt(c.members.total)}</td>
+      <td class="cell-right" style="font-weight:700; color:var(--accent-blue);">${fmt(c.finance.general_in_sub)}</td>
+      <td class="cell-right" style="color:var(--accent-gold); font-weight:700;">${ratio}%</td>
+      <td class="cell-right">${fmt(c.finance.general_out_sub)}</td>
+      <td class="cell-right">${fmt(c.finance.special_in_sub)}</td>
+      <td class="cell-right">${fmt(c.finance.special_out_sub)}</td>
+      <td class="cell-right">${fmt(c.finance.general_out_balance)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ============================================================================
+// 4. 서울연회 관리자 모드 렌더링 (13개 지방회 취합)
+// ============================================================================
+function renderConferenceView() {
+  // 마포지방회 데이터는 현재 입력된 AppState의 실측값으로 항상 최신 동기화!
+  const mapoGenIn = AppState.churches.reduce((a, c) => a + (c.finance.general_in_sub || 0), 0);
+  const mapoGenOut = AppState.churches.reduce((a, c) => a + (c.finance.general_out_sub || 0), 0);
+  const mapoSpecIn = AppState.churches.reduce((a, c) => a + (c.finance.special_in_sub || 0), 0);
+  const mapoFull = AppState.churches.reduce((a, c) => a + (c.members.full || 0), 0);
+  const mapoTotal = AppState.churches.reduce((a, c) => a + (c.members.total || 0), 0);
+
+  if (AppState.conferenceDistricts["마포지방회"]) {
+    AppState.conferenceDistricts["마포지방회"].churchCount = AppState.churches.length;
+    AppState.conferenceDistricts["마포지방회"].generalInSub = mapoGenIn;
+    AppState.conferenceDistricts["마포지방회"].generalOutSub = mapoGenOut;
+    AppState.conferenceDistricts["마포지방회"].specialInSub = mapoSpecIn;
+    AppState.conferenceDistricts["마포지방회"].fullMembers = mapoFull;
+    AppState.conferenceDistricts["마포지방회"].totalMembers = mapoTotal;
+    AppState.conferenceDistricts["마포지방회"].grandTotal = mapoGenIn + mapoSpecIn;
+    AppState.conferenceDistricts["마포지방회"].submitted = true;
+  }
+
+  // 카드 그리드 렌더링
+  const cardGrid = document.getElementById("confDistCardGrid");
+  cardGrid.innerHTML = "";
+
+  SEOUL_DISTRICTS.forEach(dName => {
+    const d = AppState.conferenceDistricts[dName] || { submitted: false, churchCount: 0, generalInSub: 0 };
+    const card = document.createElement("div");
+    card.className = "dist-card";
+    card.innerHTML = `
+      <div class="dist-card-hdr">
+        <span class="dist-name">${dName}</span>
+        <span class="dist-badge ${d.submitted ? 'done' : 'pending'}">
+          ${d.submitted ? '✓ 제출 완료' : '대기중'}
+        </span>
+      </div>
+      <div class="dist-metrics">
+        <div>
+          <div style="font-size:11.5px; color:var(--ink-muted);">교회수</div>
+          <div class="dist-metric-val">${d.churchCount}개</div>
+        </div>
+        <div>
+          <div style="font-size:11.5px; color:var(--ink-muted);">입교인수</div>
+          <div class="dist-metric-val">${fmt(d.fullMembers)}명</div>
+        </div>
+        <div style="grid-column:span 2;">
+          <div style="font-size:11.5px; color:var(--ink-muted);">경상비 결산</div>
+          <div class="dist-metric-val" style="color:var(--accent-blue);">${fmt(d.generalInSub)}원</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:6px;">
+        <button class="btn btn-sm" style="flex:1; justify-content:center;" onclick="triggerDistUpload('${dName}')">파일불러오기</button>
+      </div>
+    `;
+    cardGrid.appendChild(card);
+  });
+
+  // 서울연회 총괄표 테이블 렌더링
+  const tbody = document.getElementById("confSummaryTableBody");
+  tbody.innerHTML = "";
+
+  const confTotIn = Object.values(AppState.conferenceDistricts).reduce((acc, d) => acc + (d.generalInSub || 0), 0);
+
+  let cTotChurches = 0, cTotFull = 0, cTotMem = 0, cTotGenIn = 0, cTotGenOut = 0, cTotSpecIn = 0, cTotGrand = 0;
+
+  SEOUL_DISTRICTS.forEach((dName, idx) => {
+    const d = AppState.conferenceDistricts[dName] || {};
+    cTotChurches += (d.churchCount || 0);
+    cTotFull += (d.fullMembers || 0);
+    cTotMem += (d.totalMembers || 0);
+    cTotGenIn += (d.generalInSub || 0);
+    cTotGenOut += (d.generalOutSub || 0);
+    cTotSpecIn += (d.specialInSub || 0);
+    cTotGrand += (d.grandTotal || 0);
+
+    const ratio = confTotIn > 0 ? ((d.generalInSub / confTotIn) * 100).toFixed(2) : "0.00";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="cell-center">${idx + 1}</td>
+      <td style="font-weight:700;">${dName}</td>
+      <td class="cell-center"><span class="dist-badge ${d.submitted ? 'done' : 'pending'}">${d.submitted ? '제출완료' : '미제출'}</span></td>
+      <td class="cell-center">${d.churchCount || 0}</td>
+      <td class="cell-right">${fmt(d.fullMembers)}</td>
+      <td class="cell-right">${fmt(d.totalMembers)}</td>
+      <td class="cell-right" style="font-weight:700; color:var(--accent-blue);">${fmt(d.generalInSub)}</td>
+      <td class="cell-right">${fmt(d.generalOutSub)}</td>
+      <td class="cell-right">${fmt(d.specialInSub)}</td>
+      <td class="cell-right" style="font-weight:700;">${fmt(d.grandTotal)}</td>
+      <td class="cell-right" style="color:var(--accent-gold); font-weight:700;">${ratio}%</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // 서울연회 전체 합계행
+  const ftrTr = document.createElement("tr");
+  ftrTr.className = "total-row";
+  ftrTr.innerHTML = `
+    <td class="cell-center" colspan="3">서울연회 전체 합계 (13개 지방)</td>
+    <td class="cell-center">${cTotChurches}개</td>
+    <td class="cell-right">${fmt(cTotFull)}</td>
+    <td class="cell-right">${fmt(cTotMem)}</td>
+    <td class="cell-right" style="color:var(--accent-blue);">${fmt(cTotGenIn)}</td>
+    <td class="cell-right">${fmt(cTotGenOut)}</td>
+    <td class="cell-right">${fmt(cTotSpecIn)}</td>
+    <td class="cell-right">${fmt(cTotGrand)}</td>
+    <td class="cell-right">100.00%</td>
+  `;
+  tbody.appendChild(ftrTr);
+}
+
+// ============================================================================
+// 5. 모달 (재정 상세입력) 로직
+// ============================================================================
+let currentEditingChurchIdx = null;
+
+function openFinModal(idx) {
+  currentEditingChurchIdx = idx;
+  const c = AppState.churches[idx];
+  if (!c) return;
+
+  document.getElementById("modalChurchTitle").textContent = `${c.name || '교회'} — 재정 상세 입력`;
+  document.getElementById("modalInputFullMember").value = c.members.full || 0;
+  document.getElementById("modalInputTotalMember").value = c.members.total || 0;
+
+  // 13 일반수입
+  const tIn = document.getElementById("modalGenInTable");
+  tIn.innerHTML = "";
+  STD_GEN_IN_LABELS.forEach((lbl, i) => {
+    const val = (c.finance.general_in && c.finance.general_in[i]) || 0;
+    tIn.innerHTML += `
+      <tr>
+        <th>${i+1}. ${lbl}</th>
+        <td><input type="number" class="cell-input num-input modal-gen-in" data-idx="${i}" value="${val}" oninput="calcModalTotals()"></td>
+      </tr>
+    `;
+  });
+
+  // 13 일반지출
+  const tOut = document.getElementById("modalGenOutTable");
+  tOut.innerHTML = "";
+  STD_GEN_OUT_LABELS.forEach((lbl, i) => {
+    const val = (c.finance.general_out && c.finance.general_out[i]) || 0;
+    tOut.innerHTML += `
+      <tr>
+        <th>${i+1}. ${lbl}</th>
+        <td><input type="number" class="cell-input num-input modal-gen-out" data-idx="${i}" value="${val}" oninput="calcModalTotals()"></td>
+      </tr>
+    `;
+  });
+
+  // 5 특별수입 (클간사 지적 100% 반영 교정!)
+  const sIn = document.getElementById("modalSpecInTable");
+  sIn.innerHTML = "";
+  STD_SPEC_IN_LABELS.forEach((lbl, i) => {
+    const val = (c.finance.special_in && c.finance.special_in[i]) || 0;
+    sIn.innerHTML += `
+      <tr>
+        <th>${i+1}. ${lbl}</th>
+        <td><input type="number" class="cell-input num-input modal-spec-in" data-idx="${i}" value="${val}" oninput="calcModalTotals()"></td>
+      </tr>
+    `;
+  });
+
+  // 5 특별지출 (클간사 지적 100% 반영 교정!)
+  const sOut = document.getElementById("modalSpecOutTable");
+  sOut.innerHTML = "";
+  STD_SPEC_OUT_LABELS.forEach((lbl, i) => {
+    const val = (c.finance.special_out && c.finance.special_out[i]) || 0;
+    sOut.innerHTML += `
+      <tr>
+        <th>${i+1}. ${lbl}</th>
+        <td><input type="number" class="cell-input num-input modal-spec-out" data-idx="${i}" value="${val}" oninput="calcModalTotals()"></td>
+      </tr>
+    `;
+  });
+
+  calcModalTotals();
+  document.getElementById("finDetailModal").classList.add("show");
+}
+
+function calcModalTotals() {
+  let gIn = 0, gOut = 0, sIn = 0, sOut = 0;
+  document.querySelectorAll(".modal-gen-in").forEach(el => gIn += (parseFloat(el.value) || 0));
+  document.querySelectorAll(".modal-gen-out").forEach(el => gOut += (parseFloat(el.value) || 0));
+  document.querySelectorAll(".modal-spec-in").forEach(el => sIn += (parseFloat(el.value) || 0));
+  document.querySelectorAll(".modal-spec-out").forEach(el => sOut += (parseFloat(el.value) || 0));
+
+  document.getElementById("modalGenInSub").textContent = `${fmt(gIn)}원`;
+  document.getElementById("modalGenOutSub").textContent = `${fmt(gOut)}원`;
+  document.getElementById("modalSpecInSub").textContent = `${fmt(sIn)}원`;
+  document.getElementById("modalSpecOutSub").textContent = `${fmt(sOut)}원`;
+
+  document.getElementById("modalSummaryIn").textContent = fmt(gIn);
+  document.getElementById("modalSummaryOut").textContent = fmt(gOut);
+}
+
+function closeFinModal() {
+  document.getElementById("finDetailModal").classList.remove("show");
+  currentEditingChurchIdx = null;
+}
+
+function saveFinModal() {
+  if (currentEditingChurchIdx === null) return;
+  const c = AppState.churches[currentEditingChurchIdx];
+
+  const genIn = new Array(13).fill(0);
+  document.querySelectorAll(".modal-gen-in").forEach(el => genIn[parseInt(el.dataset.idx, 10)] = (parseFloat(el.value) || 0));
+  const genOut = new Array(13).fill(0);
+  document.querySelectorAll(".modal-gen-out").forEach(el => genOut[parseInt(el.dataset.idx, 10)] = (parseFloat(el.value) || 0));
+  const specIn = new Array(5).fill(0);
+  document.querySelectorAll(".modal-spec-in").forEach(el => specIn[parseInt(el.dataset.idx, 10)] = (parseFloat(el.value) || 0));
+  const specOut = new Array(5).fill(0);
+  document.querySelectorAll(".modal-spec-out").forEach(el => specOut[parseInt(el.dataset.idx, 10)] = (parseFloat(el.value) || 0));
+
+  c.finance.general_in = genIn;
+  c.finance.general_in_sub = genIn.reduce((a, b) => a + b, 0);
+  c.finance.general_out = genOut;
+  c.finance.general_out_sub = genOut.reduce((a, b) => a + b, 0);
+  c.finance.special_in = specIn;
+  c.finance.special_in_sub = specIn.reduce((a, b) => a + b, 0);
+  c.finance.special_out = specOut;
+  c.finance.special_out_sub = specOut.reduce((a, b) => a + b, 0);
+
+  c.members.full = parseInt(document.getElementById("modalInputFullMember").value, 10) || 0;
+  c.members.total = parseInt(document.getElementById("modalInputTotalMember").value, 10) || 0;
+
+  closeFinModal();
+  saveToLocalStorage();
+  renderAll();
+}
+
+// ============================================================================
+// 6. 모드 전환 및 탭 전환
+// ============================================================================
+function switchMode(mode) {
+  AppState.mode = mode;
+  const btnDist = document.getElementById("btnModeDistrict");
+  const btnConf = document.getElementById("btnModeConference");
+  const dView = document.getElementById("districtView");
+  const cView = document.getElementById("conferenceView");
+  const dTabs = document.getElementById("districtTabs");
+
+  if (mode === "district") {
+    btnDist.classList.add("active");
+    btnConf.classList.remove("active");
+    dView.style.display = "block";
+    cView.style.display = "none";
+    dTabs.style.display = "flex";
+  } else {
+    btnDist.classList.remove("active");
+    btnConf.classList.add("active");
+    dView.style.display = "none";
+    cView.style.display = "block";
+    dTabs.style.display = "none";
+    renderConferenceView();
+  }
+}
+
+function switchDistrictTab(tab) {
+  document.getElementById("tabBtnGrid").classList.toggle("active", tab === "grid");
+  document.getElementById("tabBtnForm21").classList.toggle("active", tab === "form21");
+  document.getElementById("tabBtnForm22").classList.toggle("active", tab === "form22");
+
+  document.getElementById("tabContentGrid").style.display = tab === "grid" ? "block" : "none";
+  document.getElementById("tabContentForm21").style.display = tab === "form21" ? "block" : "none";
+  document.getElementById("tabContentForm22").style.display = tab === "form22" ? "block" : "none";
+}
+
+// ============================================================================
+// 7. 내보내기 / 가져오기 (Export & Import)
+// ============================================================================
+function copyWebLink() {
+  const url = window.location.href;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
+      alert('성공: 통계스튜디오 웹 주소가 복사되었습니다! 카카오톡이나 문자로 전달하세요.');
+    });
+  } else {
+    prompt('통계스튜디오 웹 주소를 복사하세요:', url);
+  }
+}
+
+function exportDistrictJson() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(AppState, null, 2));
+  const a = document.createElement("a");
+  a.setAttribute("href", dataStr);
+  a.setAttribute("download", `${AppState.meta.year}_${AppState.meta.district}_통계취합데이터.kmc`);
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function exportToExcel() {
+  const wb = XLSX.utils.book_new();
+
+  // 시트 1: 개체교회 현황
+  const rows = [
+    ["번호", "교회명", "담임자", "입교인", "전체교인", "경상비결산(일반수입소계)", "일반지출소계", "차기이월금", "특별수입소계", "특별지출소계", "경상비비중(%)"]
+  ];
+  const totGenIn = AppState.churches.reduce((a, c) => a + (c.finance.general_in_sub || 0), 0);
+  AppState.churches.forEach((c, i) => {
+    const ratio = totGenIn > 0 ? ((c.finance.general_in_sub / totGenIn) * 100).toFixed(2) : "0.00";
+    rows.push([
+      i + 1, c.name, c.pastor, c.members.full, c.members.total,
+      c.finance.general_in_sub, c.finance.general_out_sub, c.finance.general_out_balance,
+      c.finance.special_in_sub, c.finance.special_out_sub, ratio
+    ]);
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), "1_교회별현황(양식2-2)");
+
+  XLSX.writeFile(wb, `${AppState.meta.year}_${AppState.meta.district}_통계집계표_완성본.xlsx`);
+}
+
+function exportConferenceExcel() {
+  const wb = XLSX.utils.book_new();
+  const rows = [
+    ["번호", "지방회명", "제출여부", "교회수", "입교인수", "전체교인수", "경상비결산액", "일반지출소계", "특별회계수입", "재정총계(순계)"]
+  ];
+  SEOUL_DISTRICTS.forEach((dName, i) => {
+    const d = AppState.conferenceDistricts[dName] || {};
+    rows.push([
+      i + 1, dName, d.submitted ? "제출완료" : "미제출",
+      d.churchCount || 0, d.fullMembers || 0, d.totalMembers || 0,
+      d.generalInSub || 0, d.generalOutSub || 0, d.specialInSub || 0, d.grandTotal || 0
+    ]);
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), "서울연회_13개지방회_총괄표");
+  XLSX.writeFile(wb, `${AppState.meta.year}_서울연회_13개지방회_통합통계집계표.xlsx`);
+}
+
+function importExcelFile(fileList) {
+  if (!fileList || fileList.length === 0) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const data = new Uint8Array(e.target.result);
+    const wb = XLSX.read(data, { type: "array" });
+    const firstSheetName = wb.SheetNames[0];
+    const ws = wb.Sheets[firstSheetName];
+    const json = XLSX.utils.sheet_to_json(ws, { header: 1 });
+
+    if (json.length > 1) {
+      AppState.churches = [];
+      for (let i = 1; i < json.length; i++) {
+        const row = json[i];
+        if (!row || row.length === 0 || !row[1]) continue;
+        AppState.churches.push({
+          no: i,
+          name: String(row[1] || ""),
+          pastor: String(row[2] || ""),
+          members: { full: parseInt(row[3], 10) || 0, total: parseInt(row[4], 10) || 0 },
+          finance: {
+            general_in: [0,0,0,0,0,0,0,0,0,0,0,0,0],
+            general_in_sub: parseFloat(row[5]) || 0,
+            general_out: [0,0,0,0,0,0,0,0,0,0,0,0,0],
+            general_out_balance: parseFloat(row[7]) || 0,
+            general_out_sub: parseFloat(row[6]) || 0,
+            special_in: [0,0,0,0,0],
+            special_in_sub: parseFloat(row[8]) || 0,
+            special_out: [0,0,0,0,0],
+            special_out_sub: parseFloat(row[9]) || 0
+          }
+        });
+      }
+      saveToLocalStorage();
+      renderAll();
+      alert(`성공: 엑셀 파일에서 ${AppState.churches.length}개 교회 데이터를 불러왔습니다.`);
+    }
+  };
+  reader.readAsArrayBuffer(fileList[0]);
+}
+
+function triggerDistUpload(distName) {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".kmc, .json";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const obj = JSON.parse(ev.target.result);
+        if (obj && obj.churches) {
+          const totIn = obj.churches.reduce((a, c) => a + (c.finance.general_in_sub || 0), 0);
+          const totOut = obj.churches.reduce((a, c) => a + (c.finance.general_out_sub || 0), 0);
+          const totSpec = obj.churches.reduce((a, c) => a + (c.finance.special_in_sub || 0), 0);
+          const totFull = obj.churches.reduce((a, c) => a + (c.members.full || 0), 0);
+          const totMem = obj.churches.reduce((a, c) => a + (c.members.total || 0), 0);
+
+          AppState.conferenceDistricts[distName] = {
+            submitted: true,
+            churchCount: obj.churches.length,
+            fullMembers: totFull,
+            totalMembers: totMem,
+            generalInSub: totIn,
+            generalOutSub: totOut,
+            specialInSub: totSpec,
+            grandTotal: totIn + totSpec
+          };
+          saveToLocalStorage();
+          renderConferenceView();
+          alert(`성공: '${distName}' 통계 데이터(${obj.churches.length}개 교회)가 연회 집계표에 반영되었습니다!`);
+        }
+      } catch (err) {
+        alert("파일 파싱 오류: 올바른 .kmc 파일이 아닙니다.");
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+</script>
+</body>
+</html>
